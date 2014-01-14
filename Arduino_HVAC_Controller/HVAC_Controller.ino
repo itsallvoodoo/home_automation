@@ -37,8 +37,10 @@ long oldTemp = 0;
 // -------------Library Interaction--------------
 // Data wire is plugged into busPin on the Arduino
 #define ONE_WIRE_BUS busPin
+
 // Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
 OneWire oneWire(ONE_WIRE_BUS);
+
 // Pass our oneWire reference to Dallas Temperature. 
 DallasTemperature sensors(&oneWire);
 //void wdt_reset(void);
@@ -89,7 +91,7 @@ boolean getTemp(){
     //Serial.print(" reports: ");
     //Serial.println(sensors.getTempF(addrs[x]));
     temp = sensors.getTempF(addrs[x]);
-    if(temp > currentTemp){
+    if(temp > currentTemp){     // WHY DO I HAVE THIS AS > ??? ------------------------
       currentTemp = temp;
     }      
   }
