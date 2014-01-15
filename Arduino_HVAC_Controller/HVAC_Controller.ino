@@ -15,13 +15,13 @@
 #include <DallasTemperature.h>
 
 // --------------PARAMETERS---------------------
-byte addrs[2][8] = {{16,24,64,68,0,8,0,112},{16,206,166,130,2,8,0,63}};
+byte addrs[1][8] = {{16,24,64,68,0,8,0,112}}; // ,{16,206,166,130,2,8,0,63}
                                   // {16,24,64,68,0,8,0,112} Temp Sensor 1
                                   // {16,206,166,130,2,8,0,63} Temp Sensor 2
 int busPin = 2;                   // Data bus for One Wire Comms
 int upPin = 3;                    // Pin used to increase set temp
 int downPin = 4;                  // Pin used to decrease set temp
-int numOfDevices = 2;             // How many sensors are in loop
+int numOfDevices = 1;             // How many sensors are in loop
 int high = 80;                    // This is the default high temp setting
 int low = 70;                     // This is the default low temp setting
 long currentTemp = 0.0;             // Highest or lowest temp depending on mode
@@ -49,8 +49,11 @@ DallasTemperature sensors(&oneWire);
 DeviceAddress insideThermometer = { 0x10, 0x39, 0xe2, 0x82, 0x02, 0x08, 0x00, 0x3e };
 
 
-
-// --------------SETUP-----------------------
+// ----------------------------------------------------------------------------------------
+// Function Name: setup()
+// Parameters:    None
+// Returns:       None
+// Description:   This function executes housekeeping duties and staging for the loop() function; executed once
 void setup(){
 
   pinMode(busPin,INPUT);
@@ -63,7 +66,11 @@ void setup(){
 
 }
 
-// --------------------MAIN------------------
+// ----------------------------------------------------------------------------------------
+// Function Name: loop()
+// Parameters:    None
+// Returns:       None
+// Description:   This is the main executing block of the program, calling all ancillary functions to operate the Arduino
 void loop(){
   //Serial.println("Getting Temperature Data...");
   //delay(100);
@@ -79,11 +86,17 @@ void loop(){
   
 }
 
+// ----------------------------------------------------------------------------------------
+// Function Name: getTemp()
+// Parameters:    None
+// Returns:       Boolean, True if the temperature has changed, else False
+// Description:   This function polls the temp sensors, retrieves the values, and then returns
 boolean getTemp(){
   currentTemp = 0;
   long temp = 0;
-  sensors.requestTemperatures(); // Send the command to get temperatures
+  sensors.requestTemperatures(); // Send the command to the device to get temperatures
   
+  // Go through devices and read the temperatures
   for(int x = 0; x < numOfDevices; x++){
     // ------------FOLLOWING LINES FOR TESTING ONLY
     //Serial.print("Sensor ");
@@ -91,10 +104,12 @@ boolean getTemp(){
     //Serial.print(" reports: ");
     //Serial.println(sensors.getTempF(addrs[x]));
     temp = sensors.getTempF(addrs[x]);
-    if(temp > currentTemp){     // WHY DO I HAVE THIS AS > ??? ------------------------
+    if(temp != currentTemp){
       currentTemp = temp;
     }      
   }
+
+  // Check to see if temperature has changed
   if (currentTemp != oldTemp) {
     oldTemp = currentTemp;
     return true;
@@ -104,6 +119,11 @@ boolean getTemp(){
   }
 }
 
+// ----------------------------------------------------------------------------------------
+// Function Name: getSetPoint()
+// Parameters:    None
+// Returns:       Boolean, True if the temperature has changed, else False
+// Description:   This function checks to see if the setpoint has been changed and adjusts it accordingly.
 boolean getSetPoint(){
   val = digitalRead(upPin);
   if (val == LOW) {
