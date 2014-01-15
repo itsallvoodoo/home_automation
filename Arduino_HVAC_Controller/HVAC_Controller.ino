@@ -10,17 +10,17 @@
 
 
 
-// -------------LIBRARIES----------------
+// -------------LIBRARIES---------------- THESE ARE REQUIRED TO BE IN YOUR SKETCHBOOK/LIBRARY FOLDER FOR COMPILING ----
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
 // --------------PARAMETERS---------------------
-byte addrs[1][8] = {{16,24,64,68,0,8,0,112}}; // ,{16,206,166,130,2,8,0,63}
+byte addrs[1][8] = {{16,206,166,130,2,8,0,63}}; // ,{16,24,64,68,0,8,0,112}
                                   // {16,24,64,68,0,8,0,112} Temp Sensor 1
                                   // {16,206,166,130,2,8,0,63} Temp Sensor 2
-int busPin = 2;                   // Data bus for One Wire Comms
+int busPin = 4;                   // Data bus for One Wire Comms
 int upPin = 3;                    // Pin used to increase set temp
-int downPin = 4;                  // Pin used to decrease set temp
+int downPin = 2;                  // Pin used to decrease set temp
 int numOfDevices = 1;             // How many sensors are in loop
 int high = 80;                    // This is the default high temp setting
 int low = 70;                     // This is the default low temp setting
@@ -79,10 +79,10 @@ void loop(){
     Serial.println(currentTemp);
   }
   
-  if (getSetPoint() == true) {
-    Serial.print("Current setpoint is: ");
-    Serial.println(tempSetpoint);
-  }
+  //if (getSetPoint() == true) {
+  //  Serial.print("Current setpoint is: ");
+  //  Serial.println(tempSetpoint);
+  //}
   
 }
 
