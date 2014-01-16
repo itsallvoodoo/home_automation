@@ -32,8 +32,9 @@ String heat = "Heat";
 String cool = "Cool";
 String currentMode = heat;
 int tempSetpoint = 75;            // Default temperature setpoint on a reboot
-boolean val;                // Variable for user input
+boolean val;                      // Variable for user input
 long oldTemp = 0;
+int timeout = 30                  // Backlight timeout variable
 
 // -------------Library Interaction--------------
 // Data wire is plugged into busPin on the Arduino
@@ -51,6 +52,8 @@ DeviceAddress insideThermometer = { 0x10, 0x39, 0xe2, 0x82, 0x02, 0x08, 0x00, 0x
 
 // Create our LCD Shield instance
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
+#define ON 0x7            // For single color LCD, set on to white
+#define OFF 0x0           // For single color LCD, set off to black
 
 // ----------------------------------------------------------------------------------------
 // Function Name: setup()
@@ -59,15 +62,12 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 // Description:   This function executes housekeeping duties and staging for the loop() function; executed once
 void setup(){
 
-  pinMode(busPin,INPUT);
+  pinMode(busPin,INPUT);  // Designate temperature bus pin data direction
   Serial.begin(serialSpeed);
 
-  // Start up the library
-  sensors.begin(); // IC Default 9 bit. If you have troubles consider upping it 12. Ups the delay
-  
-  // set up the LCD's number of columns and rows: 
-  lcd.begin(16, 2);
-  lcd.setBacklight(ON);
+  sensors.begin();        // Start up the library. IC Default is 9 bit. If you have troubles consider upping it 12. Ups the delay
+  lcd.begin(16, 2);       // set up the LCD's number of columns and rows
+  lcd.setBacklight(ON);   // Start off with backlight on until time-out
 
 }
 
@@ -78,20 +78,40 @@ void setup(){
 // Description:   This is the main executing block of the program, calling all ancillary functions to operate the Arduino
 void loop(){
   
-  lcd.setCursor(0, 1);
+  if (timeout == 0) {                   // Turn on backlight for 30 seconds, else turn it off
+    lcd.setBacklight(OFF);
+  }else {
+    lcd.setBacklight(ON);
+  }
+
+  lcd.setCursor(0, 1);                  // Starting postion of character printing
   
+  uint8_t buttons = lcd.readButtons();  // Constantly check to see if something has been put on the bus
   
-  
-  uint8_t buttons = lcd.readButtons();
-  
-  if (getTemp()) {
+  if (getTemp()) {                      // Constantly check to see if the temperature has changed, and update appropriately
     lcd.clear();
     lcd.print("Current Temp: ");
     lcd.print(currentTemp);
   }
   
   if (buttons) {
-    lcd.clear();
+    lcd.setBacklight(ON)
+    if (buttons & BUTTON_SELECT) {
+      lcd.print("SELECT ");
+      lcd.setBacklight(VIOLET);
+    }
+    buttonHandler();
+  }
+  
+}
+
+// ----------------------------------------------------------------------------------------
+// Function Name: buttonHandler()
+// Parameters:    None
+// Returns:       Boolean, True if the temperature has changed, else False
+// Description:   This function polls the temp sensors, retrieves the values, and then returns
+boolean buttonHandler(){
+  lcd.clear();
     
     // If the UP Button is pushed, increasing the setpoint
     if (buttons & BUTTON_UP) {
@@ -106,8 +126,20 @@ void loop(){
       lcd.print("Setpoint: ");
       lcd.print(high);
     }
-  }
-  
+
+    if (buttons & BUTTON_LEFT) {
+      lcd.print("LEFT ");
+      lcd.setBacklight(GREEN);
+    }
+    if (buttons & BUTTON_RIGHT) {
+      lcd.print("RIGHT ");
+      lcd.setBacklight(TEAL);
+    }
+    if (buttons & BUTTON_SELECT) {
+      lcd.print("SELECT ");
+      lcd.setBacklight(VIOLET);
+    }
+
 }
 
 // ----------------------------------------------------------------------------------------
