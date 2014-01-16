@@ -25,16 +25,13 @@ int busPin = 4;                   // Data bus for One Wire Comms
 int numOfDevices = 1;             // How many sensors are in loop
 int high = 80;                    // This is the default high temp setting
 int low = 70;                     // This is the default low temp setting
-long currentTemp = 0.0;             // Highest or lowest temp depending on mode
-boolean mode = 1;                 // Heat or Cool
+long currentTemp = 0.0;           // Current room temperature
 int serialSpeed = 9600;           // Default serial comm speed
-String heat = "Heat";
-String cool = "Cool";
-String currentMode = heat;
 int tempSetpoint = 75;            // Default temperature setpoint on a reboot
 boolean val;                      // Variable for user input
 long oldTemp = 0;
-int timeout = 30                  // Backlight timeout variable
+int timeout = 30;                 // Backlight timeout variable
+boolean editable = FALSE;         // Determines whether or not button presses will do anything, used to avoid accidental changes
 
 // -------------Library Interaction--------------
 // Data wire is plugged into busPin on the Arduino
@@ -78,11 +75,13 @@ void setup(){
 // Description:   This is the main executing block of the program, calling all ancillary functions to operate the Arduino
 void loop(){
   
-  if (timeout == 0) {                   // Turn on backlight for 30 seconds, else turn it off
+  if (timeout <= 0) {                   // Turn on backlight for 30 seconds, else turn it off
     lcd.setBacklight(OFF);
+    editable == FALSE
   }else {
     lcd.setBacklight(ON);
   }
+  // timeout = timout -                 TODO: When networking is implement, get system time and use it to change timeout
 
   lcd.setCursor(0, 1);                  // Starting postion of character printing
   
@@ -94,13 +93,15 @@ void loop(){
     lcd.print(currentTemp);
   }
   
-  if (buttons) {
-    lcd.setBacklight(ON)
-    if (buttons & BUTTON_SELECT) {
-      lcd.print("SELECT ");
-      lcd.setBacklight(VIOLET);
+  if (buttons) {                        // Handle button presses
+    lcd.setBacklight(ON);
+
+    if (buttons & BUTTON_SELECT) {      // Allow parameters to be changed only if the Select button has been pressed first
+      editable = TRUE;
     }
-    buttonHandler();
+    if (editable) {                     // go to buttonHandler to handle menu switching and parameter manipulations
+      buttonHandler();
+    }
   }
   
 }
