@@ -11,16 +11,17 @@
 
 
 // -------------LIBRARIES---------------- THESE ARE REQUIRED TO BE IN YOUR SKETCHBOOK/LIBRARY FOLDER FOR COMPILING ----
-#include <OneWire.h>
-#include <DallasTemperature.h>
+#include <OneWire.h>              // Protocol to communicate with onewire bus devices
+#include <DallasTemperature.h>    // Temperature sensor protocol
+#include <Wire.h>                 // Protocol to communicate with I2C devices
+#include <Adafruit_MCP23017.h>    // LCD protocol
+#include <Adafruit_RGBLCDShield.h>// LCD + Button shield protocol
 
 // --------------PARAMETERS---------------------
 byte addrs[1][8] = {{16,206,166,130,2,8,0,63}}; // ,{16,24,64,68,0,8,0,112}
                                   // {16,24,64,68,0,8,0,112} Temp Sensor 1
                                   // {16,206,166,130,2,8,0,63} Temp Sensor 2
 int busPin = 4;                   // Data bus for One Wire Comms
-int upPin = 3;                    // Pin used to increase set temp
-int downPin = 2;                  // Pin used to decrease set temp
 int numOfDevices = 1;             // How many sensors are in loop
 int high = 80;                    // This is the default high temp setting
 int low = 70;                     // This is the default low temp setting
@@ -48,6 +49,8 @@ DallasTemperature sensors(&oneWire);
 // arrays to hold device address
 DeviceAddress insideThermometer = { 0x10, 0x39, 0xe2, 0x82, 0x02, 0x08, 0x00, 0x3e };
 
+// Create our LCD Shield instance
+Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 // ----------------------------------------------------------------------------------------
 // Function Name: setup()
@@ -57,12 +60,14 @@ DeviceAddress insideThermometer = { 0x10, 0x39, 0xe2, 0x82, 0x02, 0x08, 0x00, 0x
 void setup(){
 
   pinMode(busPin,INPUT);
-  pinMode(upPin,INPUT);
-  pinMode(downPin,INPUT);
   Serial.begin(serialSpeed);
 
   // Start up the library
   sensors.begin(); // IC Default 9 bit. If you have troubles consider upping it 12. Ups the delay
+  
+  // set up the LCD's number of columns and rows: 
+  lcd.begin(16, 2);
+  lcd.setBacklight(ON);
 
 }
 
@@ -72,17 +77,36 @@ void setup(){
 // Returns:       None
 // Description:   This is the main executing block of the program, calling all ancillary functions to operate the Arduino
 void loop(){
-  //Serial.println("Getting Temperature Data...");
-  //delay(100);
-  if (getTemp() == true) {
-    Serial.print("Current Temperature is: ");
-    Serial.println(currentTemp);
+  
+  lcd.setCursor(0, 1);
+  
+  
+  
+  uint8_t buttons = lcd.readButtons();
+  
+  if (getTemp()) {
+    lcd.clear();
+    lcd.print("Current Temp: ");
+    lcd.print(currentTemp);
   }
   
-  //if (getSetPoint() == true) {
-  //  Serial.print("Current setpoint is: ");
-  //  Serial.println(tempSetpoint);
-  //}
+  if (buttons) {
+    lcd.clear();
+    
+    // If the UP Button is pushed, increasing the setpoint
+    if (buttons & BUTTON_UP) {
+      high = high + 1;
+      lcd.print("Setpoint: ");
+      lcd.print(high);
+    }
+    
+    // If the Down Button is pushed, decreasing the setpoint
+    if (buttons & BUTTON_DOWN) {
+      high = high - 1;
+      lcd.print("Setpoint: ");
+      lcd.print(high);
+    }
+  }
   
 }
 
@@ -119,29 +143,5 @@ boolean getTemp(){
   }
 }
 
-// ----------------------------------------------------------------------------------------
-// Function Name: getSetPoint()
-// Parameters:    None
-// Returns:       Boolean, True if the temperature has changed, else False
-// Description:   This function checks to see if the setpoint has been changed and adjusts it accordingly.
-boolean getSetPoint(){
-  val = digitalRead(upPin);
-  if (val == LOW) {
-    while (val == LOW) {
-      val = digitalRead(upPin);
-    }
-    tempSetpoint = tempSetpoint + 1;
-    return true;
-  }
-  val = digitalRead(downPin);
-  if (val == LOW) {
-    while (val == LOW) {
-      val = digitalRead(downPin);
-    }
-    tempSetpoint = tempSetpoint - 1;
-    return true;
-  }
-  return false;
-}
   
 
