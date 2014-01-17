@@ -32,6 +32,8 @@ boolean val;                      // Variable for user input
 long oldTemp = 0;
 int timeout = 30;                 // Backlight timeout variable
 boolean editable = FALSE;         // Determines whether or not button presses will do anything, used to avoid accidental changes
+char menu[] = {"Cooling", "Heating"};  // Menu display for either setting the high point or the low point of the temp range
+int menuPosition = 1;             // Current position in the setting menu
 
 // -------------Library Interaction--------------
 // Data wire is plugged into busPin on the Arduino
@@ -112,35 +114,70 @@ void loop(){
 // Returns:       Boolean, True if the temperature has changed, else False
 // Description:   This function polls the temp sensors, retrieves the values, and then returns
 boolean buttonHandler(){
+
+  // --------------PARAMETERS---------------------
+  int highModifier = 0;
+  int lowModifier = 0;
+    
+
+  // --------------SETUP---------------------
   lcd.clear();
-    
-    // If the UP Button is pushed, increasing the setpoint
-    if (buttons & BUTTON_UP) {
-      high = high + 1;
-      lcd.print("Setpoint: ");
-      lcd.print(high);
-    }
-    
-    // If the Down Button is pushed, decreasing the setpoint
-    if (buttons & BUTTON_DOWN) {
-      high = high - 1;
-      lcd.print("Setpoint: ");
-      lcd.print(high);
-    }
 
-    if (buttons & BUTTON_LEFT) {
-      lcd.print("LEFT ");
-      lcd.setBacklight(GREEN);
+  // If the UP Button is pushed, increasing the setpoint
+  if (buttons & BUTTON_UP) {
+    if (menuPosition == 0) {
+      lowModifier = 1;
     }
-    if (buttons & BUTTON_RIGHT) {
-      lcd.print("RIGHT ");
-      lcd.setBacklight(TEAL);
+    if (menuPosition == 1) {
+      highModifier = 1;
     }
-    if (buttons & BUTTON_SELECT) {
-      lcd.print("SELECT ");
-      lcd.setBacklight(VIOLET);
+  }
+    
+  // If the Down Button is pushed, decreasing the setpoint
+  if (buttons & BUTTON_DOWN) {
+    if (menuPosition == 0) {
+      lowModifier = -1;
     }
+    if (menuPosition == 1) {
+      highModifier = -1;
+    }
+  }
 
+  // If the Left Button is pushed, change the menu context
+  if (buttons & BUTTON_LEFT) {
+    if (menuPosition == 1){
+      menuPosition = 0;
+    }else {
+      menuPosition = 1;
+    }
+  }
+
+  // If the Right Button is pushed, change the menu context
+  if (buttons & BUTTON_RIGHT) {
+    if (menuPosition == 1){
+      menuPosition = 0;
+    }else {
+      menuPosition = 1;
+    }
+  }
+
+  high = high + highModifier;
+  low = low + lowModifier;
+
+  lcd.setCursor(0, 1);
+  lcd.print(menu[menuPosition]);
+  lcd.setCursor(1, 1);
+  lcd.print("Setpoint: ");
+  lcd.setCursor(1,11);
+
+  if (menuPosition == 0) {
+    lcd.print(low);
+  }
+  if (menuPosition == 1) {
+    lcd.print(high);
+  }
+
+  
 }
 
 // ----------------------------------------------------------------------------------------
