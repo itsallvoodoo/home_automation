@@ -18,13 +18,13 @@
 #include <Adafruit_RGBLCDShield.h>// LCD + Button shield protocol
 
 // --------------PARAMETERS---------------------
-byte addrs[1][8] = {{16,206,166,130,2,8,0,63}}; // ,{16,24,64,68,0,8,0,112}
+byte addrs[1][8] = {{16,206,166,130,2,8,0,63}};
                                   // {16,24,64,68,0,8,0,112} Temp Sensor 1
-                                  // {16,206,166,130,2,8,0,63} Temp Sensor 2
+                                  // {16,206,166,130,2,8,0,63} Temp Sensor 2 unused at this time
 int busPin = 4;                   // Data bus for One Wire Comms
 int numOfDevices = 1;             // How many sensors are in loop
-int high = 80;                    // This is the default high temp setting
-int low = 70;                     // This is the default low temp setting
+int heat = 70;                    // This is the default heater trigger temp setting
+int cool = 80;                     // This is the default cooling trigger temp setting
 long currentTemp = 0.0;           // Current room temperature
 int serialSpeed = 9600;           // Default serial comm speed
 int tempSetpoint = 75;            // Default temperature setpoint on a reboot
@@ -89,6 +89,7 @@ void loop(){
   
   uint8_t buttons = lcd.readButtons();  // Constantly check to see if something has been put on the bus
   
+  // --------------Handle updating Temp Change Display---------------------
   if (getTemp()) {                      // Constantly check to see if the temperature has changed, and update appropriately
     lcd.clear();
     lcd.print("Current Temp: ");
@@ -96,7 +97,8 @@ void loop(){
     Serial.println(currentTemp);
   }
   
-  if (buttons) {                        // Handle button presses
+  // --------------Handle Button Presses---------------------
+  if (buttons) {
     lcd.setBacklight(ON);
 
     if (buttons & BUTTON_SELECT) {      // Allow parameters to be changed only if the Select button has been pressed first
@@ -117,8 +119,8 @@ void loop(){
 boolean buttonHandler(uint8_t buttons){
 
   // --------------PARAMETERS---------------------
-  int highModifier = 0;
-  int lowModifier = 0;
+  int heatModifier = 0;
+  int coolModifier = 0;
     
 
   // --------------SETUP---------------------
@@ -127,20 +129,20 @@ boolean buttonHandler(uint8_t buttons){
   // If the UP Button is pushed, increasing the setpoint
   if (buttons & BUTTON_UP) {
     if (menuPosition == 0) {
-      lowModifier = 1;
+      coolModifier = 1;
     }
     if (menuPosition == 1) {
-      highModifier = 1;
+      heatModifier = 1;
     }
   }
     
   // If the Down Button is pushed, decreasing the setpoint
   if (buttons & BUTTON_DOWN) {
     if (menuPosition == 0) {
-      lowModifier = -1;
+      coolModifier = -1;
     }
     if (menuPosition == 1) {
-      highModifier = -1;
+      heatModifier = -1;
     }
   }
 
@@ -162,8 +164,8 @@ boolean buttonHandler(uint8_t buttons){
     }
   }
 
-  high = high + highModifier;
-  low = low + lowModifier;
+  heat = heat + heatModifier;
+  cool = cool + coolModifier;
 
   lcd.setCursor(0, 0);
   lcd.print(menu[menuPosition]);
@@ -171,10 +173,10 @@ boolean buttonHandler(uint8_t buttons){
   lcd.print("Setpoint: ");
 
   if (menuPosition == 0) {
-    lcd.print(low);
+    lcd.print(cool);
   }
   if (menuPosition == 1) {
-    lcd.print(high);
+    lcd.print(heat);
   }
 
   
@@ -192,11 +194,6 @@ boolean getTemp(){
   
   // Go through devices and read the temperatures
   for(int x = 0; x < numOfDevices; x++){
-    // ------------FOLLOWING LINES FOR TESTING ONLY
-    //Serial.print("Sensor ");
-    //Serial.print(x);
-    //Serial.print(" reports: ");
-    //Serial.println(sensors.getTempF(addrs[x]));
     temp = sensors.getTempF(addrs[x]);
     if(temp != currentTemp){
       currentTemp = temp;
