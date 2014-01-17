@@ -32,7 +32,7 @@ boolean val;                      // Variable for user input
 long oldTemp = 0;
 int timeout = 30;                 // Backlight timeout variable
 boolean editable = FALSE;         // Determines whether or not button presses will do anything, used to avoid accidental changes
-char menu[] = {"Cooling", "Heating"};  // Menu display for either setting the high point or the low point of the temp range
+char* menu[] = {"Cooling", "Heating"};  // Menu display for either setting the high point or the low point of the temp range
 int menuPosition = 1;             // Current position in the setting menu
 
 // -------------Library Interaction--------------
@@ -79,13 +79,13 @@ void loop(){
   
   if (timeout <= 0) {                   // Turn on backlight for 30 seconds, else turn it off
     lcd.setBacklight(OFF);
-    editable == FALSE
+    editable == FALSE;
   }else {
     lcd.setBacklight(ON);
   }
   // timeout = timout -                 TODO: When networking is implement, get system time and use it to change timeout
 
-  lcd.setCursor(0, 1);                  // Starting postion of character printing
+  lcd.setCursor(1, 1);                  // Starting postion of character printing
   
   uint8_t buttons = lcd.readButtons();  // Constantly check to see if something has been put on the bus
   
@@ -93,6 +93,7 @@ void loop(){
     lcd.clear();
     lcd.print("Current Temp: ");
     lcd.print(currentTemp);
+    Serial.println(currentTemp);
   }
   
   if (buttons) {                        // Handle button presses
@@ -102,7 +103,7 @@ void loop(){
       editable = TRUE;
     }
     if (editable) {                     // go to buttonHandler to handle menu switching and parameter manipulations
-      buttonHandler();
+      buttonHandler(buttons);
     }
   }
   
@@ -113,7 +114,7 @@ void loop(){
 // Parameters:    None
 // Returns:       Boolean, True if the temperature has changed, else False
 // Description:   This function polls the temp sensors, retrieves the values, and then returns
-boolean buttonHandler(){
+boolean buttonHandler(uint8_t buttons){
 
   // --------------PARAMETERS---------------------
   int highModifier = 0;
@@ -164,11 +165,10 @@ boolean buttonHandler(){
   high = high + highModifier;
   low = low + lowModifier;
 
-  lcd.setCursor(0, 1);
+  lcd.setCursor(0, 0);
   lcd.print(menu[menuPosition]);
-  lcd.setCursor(1, 1);
+  lcd.setCursor(0, 1);
   lcd.print("Setpoint: ");
-  lcd.setCursor(1,11);
 
   if (menuPosition == 0) {
     lcd.print(low);
