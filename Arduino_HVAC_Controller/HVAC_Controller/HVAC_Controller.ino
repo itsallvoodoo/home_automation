@@ -30,10 +30,12 @@ int serialSpeed = 9600;           // Default serial comm speed
 int tempSetpoint = 75;            // Default temperature setpoint on a reboot
 boolean val;                      // Variable for user input
 long oldTemp = 0;
-int timeout = 30;                 // Backlight timeout variable
+int timeOut = 30;                 // Backlight timeout variable
 boolean editable = FALSE;         // Determines whether or not button presses will do anything, used to avoid accidental changes
 char* menu[] = {"Cooling", "Heating"};  // Menu display for either setting the high point or the low point of the temp range
 int menuPosition = 1;             // Current position in the setting menu
+unsigned long heatLastRan;        // Stores the time the heater last ran
+unsigned long coolLastRan;        // Stores the time the AC last ran
 
 // -------------Library Interaction--------------
 // Data wire is plugged into busPin on the Arduino
@@ -67,6 +69,7 @@ void setup(){
   sensors.begin();        // Start up the library. IC Default is 9 bit. If you have troubles consider upping it 12. Ups the delay
   lcd.begin(16, 2);       // set up the LCD's number of columns and rows
   lcd.setBacklight(ON);   // Start off with backlight on until time-out
+  timeOut = millis();     // Set the initial backlight time
 
 }
 
@@ -77,15 +80,14 @@ void setup(){
 // Description:   This is the main executing block of the program, calling all ancillary functions to operate the Arduino
 void loop(){
   
-  if (timeout <= 0) {                   // Turn on backlight for 30 seconds, else turn it off
+  if ((millis() - timeOut) > 30000) {                   // Turn on backlight for 30 seconds, else turn it off
     lcd.setBacklight(OFF);
     editable == FALSE;
   }else {
     lcd.setBacklight(ON);
   }
-  // timeout = timout -                 TODO: When networking is implement, get system time and use it to change timeout
 
-  lcd.setCursor(1, 1);                  // Starting postion of character printing
+  lcd.setCursor(0, 1);                  // Starting postion of character printing
   
   uint8_t buttons = lcd.readButtons();  // Constantly check to see if something has been put on the bus
   
@@ -94,12 +96,12 @@ void loop(){
     lcd.clear();
     lcd.print("Current Temp: ");
     lcd.print(currentTemp);
-    Serial.println(currentTemp);
   }
   
   // --------------Handle Button Presses---------------------
   if (buttons) {
     lcd.setBacklight(ON);
+    timeOut = millis();
 
     if (buttons & BUTTON_SELECT) {      // Allow parameters to be changed only if the Select button has been pressed first
       editable = TRUE;
