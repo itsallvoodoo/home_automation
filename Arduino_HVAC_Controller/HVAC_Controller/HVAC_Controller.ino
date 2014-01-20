@@ -25,13 +25,15 @@ int busPin = 4;                   // Data bus for One Wire Comms
 int numOfDevices = 1;             // How many sensors are in loop
 int heat = 70;                    // This is the default heater trigger temp setting
 int cool = 80;                    // This is the default cooling trigger temp setting
-pinMode(7,OUTPUT);                // Heat circuit relay 
-pinMode(8,OUTPUT);                // Cooling circuit relay
+int buffer = 2;                   // This is the range away from the setpoint the heat or AC will overcool/heat to prevent shorter cycles
+int heatPin = 7;                  // Digital pin used for turning on the heater relay
+int coolPin = 8;                  // Digital pin used for turning on the AC relay
+int cycleTime - 600000;           // The length of time to delay running the AC or heat to prevent short cycling
+boolean heatRunning = FALSE;      // Stores whether the heater is currently running or not
+boolean coolRunning = FALSE;      // Stores whether the AC is currently running or not
 long currentTemp = 0.0;           // Current room temperature
 int serialSpeed = 9600;           // Default serial comm speed
-int tempSetpoint = 75;            // Default temperature setpoint on a reboot
-boolean val;                      // Variable for user input
-long oldTemp = 0;
+long oldTemp = 0;                 // Used to only update the currentTemp if the temp has changed
 unsigned long timeOut;            // Backlight timeout variable
 boolean editable = FALSE;         // Determines whether or not button presses will do anything, used to avoid accidental changes
 char* menu[] = {"Cooling", "Heating"};  // Menu display for either setting the high point or the low point of the temp range
@@ -67,6 +69,8 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 void setup(){
 
   pinMode(busPin,INPUT);  // Designate temperature bus pin data direction
+  pinMode(heatPin,OUTPUT);                // Heat circuit relay 
+  pinMode(coolPin,OUTPUT);                // Cooling circuit relay
   Serial.begin(serialSpeed);
 
   sensors.begin();        // Start up the library. IC Default is 9 bit. If you have troubles consider upping it 12. Ups the delay
@@ -128,20 +132,42 @@ void loop(){
 // ----------------------------------------------------------------------------------------
 void powerControl(){
   
-  return; // -------------------------FOLLOWING CODE IS NOT SAFE ---------------------
-  if ((currentTemp < cool) && (currentTemp > heat)) {
-    return;
-  } else if (currentTemp > cool) {
-    digitalWrite(8,LOW);
+  // TODO: Add in fan relay control
 
-  } else {
-    digitalWrite(7,LOW);
+
+  // This executes if the heater is running and it gets warm enough to turn off.
+  if (heatRunning && (currentTemp > (heat + buffer))) {
+      heatRunning = FALSE;
+      heatLastRan = millis();
+      digitalWrite(heatPin,HIGH);
+      return;
+    }
   }
 
+  // This executes if the AC is running and it gets cool enough to turn off
+  if (coolRunning && (currentTemp < (cool - buffer))) {
+      coolRunning = FALSE;
+      coolLastRan = millis();
+      digitalWrite(coolPin,HIGH);
+      return;
+    }
+  }
 
-  // Temp Note, variables needed: heatLastRan, coolLastRan
-  // Relays are 2 7 8 10
-  
+  // This executes if it gets cold enough and the heater has not run for a minimum time (short cycle protection)
+  if ((currentTemp < heat) && ((millis() - heatLastRan) > cycleTime) {
+    digitalWrite(heatPin,HIGH);
+    heatRunning = TRUE;
+    return;
+  }
+
+  // This executes if it gets hot enough and the AC has not run for 10 minutes (short cycle protection)
+  if ((currentTemp > cool) && ((millis() - coolLastRan) > 600000) {
+    digitalWrite(coolPin,HIGH);
+    coolRunning = TRUE;
+    return;
+  }
+
+  return;
 }
 
 
