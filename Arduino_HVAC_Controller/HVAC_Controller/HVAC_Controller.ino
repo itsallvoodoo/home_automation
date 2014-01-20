@@ -25,6 +25,8 @@ int busPin = 4;                   // Data bus for One Wire Comms
 int numOfDevices = 1;             // How many sensors are in loop
 int heat = 70;                    // This is the default heater trigger temp setting
 int cool = 80;                    // This is the default cooling trigger temp setting
+pinMode(7,OUTPUT);                // Heat circuit relay 
+pinMode(8,OUTPUT);                // Cooling circuit relay
 long currentTemp = 0.0;           // Current room temperature
 int serialSpeed = 9600;           // Default serial comm speed
 int tempSetpoint = 75;            // Default temperature setpoint on a reboot
@@ -114,9 +116,7 @@ void loop(){
   }
   
   // --------------Handle Heat and Cooling Cycles---------------------
-  if ((currentTemp > cool) || (currentTemp < heat)) {
-    powerControl();
-  }
+  powerControl();
   
 }
 
@@ -128,8 +128,19 @@ void loop(){
 // ----------------------------------------------------------------------------------------
 void powerControl(){
   
+  return; // -------------------------FOLLOWING CODE IS NOT SAFE ---------------------
+  if ((currentTemp < cool) && (currentTemp > heat)) {
+    return;
+  } else if (currentTemp > cool) {
+    digitalWrite(8,LOW);
+
+  } else {
+    digitalWrite(7,LOW);
+  }
+
+
   // Temp Note, variables needed: heatLastRan, coolLastRan
-  
+  // Relays are 2 7 8 10
   
 }
 
