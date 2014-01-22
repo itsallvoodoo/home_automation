@@ -17,36 +17,83 @@
 #include <Wire.h>                 // Protocol to communicate with I2C devices
 #include <Adafruit_MCP23017.h>    // LCD protocol
 #include <Adafruit_RGBLCDShield.h>// LCD + Button shield protocol
+#include <SPI.h>                  // Needed for the Ethernet shield
+#include <Ethernet.h>             // Enables internet connectivity, needs pins 10 11 12 13
+#include <EthernetUdp.h>          // Needed for the Ethernet shield
 
-// --------------PARAMETERS---------------------
+
+
+
+
+
+
+
+// ----------------------------------------------------------------------------------------
+// Variables and Parameters
+// ----------------------------------------------------------------------------------------
+// --------------- DS1820 Variables ---------------
 byte addrs[1][8] = {{16,206,166,130,2,8,0,63}};  // THIS IS PARTICULAR TO THE SPECIFIC DS1820 USED
                                   // {16,24,64,68,0,8,0,112} Temp Sensor 1
                                   // {16,206,166,130,2,8,0,63} Temp Sensor 2 unused at this time
 int busPin = 4;                   // Data bus for One Wire Comms
 int numOfDevices = 1;             // How many sensors are in loop
+long currentTemp = 0.0;           // Current room temperature
+
+
+// --------------- Relay Shield Variables ---------------
+int heatPin = 7;                  // Digital pin used for turning on the heater relay
+int coolPin = 8;                  // Digital pin used for turning on the AC relay
+
+
+
+// --------------- Ethernet Shield Variables ---------------
+// Enter a MAC address for your controller below.
+// Newer Ethernet shields have a MAC address printed on a sticker on the shield
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED }; // TODO _________________NEED TO UPDATE WITH ACTUAL______________
+unsigned int localPort = 8888;              // local port to listen for UDP packets
+IPAddress timeServer(132, 163, 4, 101);     // time-a.timefreq.bldrdoc.gov NTP server
+// IPAddress timeServer(132, 163, 4, 102);  // time-b.timefreq.bldrdoc.gov NTP server
+// IPAddress timeServer(132, 163, 4, 103);  // time-c.timefreq.bldrdoc.gov NTP server
+const int NTP_PACKET_SIZE= 48;              // NTP time stamp is in the first 48 bytes of the message
+byte packetBuffer[ NTP_PACKET_SIZE];        //buffer to hold incoming and outgoing packets
+EthernetUDP Udp;                            // A UDP instance to let us send and receive packets over UDP
+
+
+// --------------- LCD Shield Variables ---------------
+unsigned long timeOut;            // Backlight timeout variable
+char* menu[] = {"Cooling", "Heating"};  // Menu display for either setting the high point or the low point of the temp range
+int menuPosition = 1;             // Current position in the setting menu
+boolean editable = FALSE;         // Determines whether or not button presses will do anything, used to avoid accidental changes
+
+
+
+// --------------- General Variables ---------------
 int heat = 70;                    // This is the default heater trigger temp setting
 int cool = 80;                    // This is the default cooling trigger temp setting
 int buffer = 2;                   // This is the range away from the setpoint the heat or AC will overcool/heat to prevent shorter cycles
-int heatPin = 7;                  // Digital pin used for turning on the heater relay
-int coolPin = 8;                  // Digital pin used for turning on the AC relay
 int cycleTime - 600000;           // The length of time to delay running the AC or heat to prevent short boolean
-cycling heatRunning = FALSE;      // Stores whether the heater is currently running or not
+boolean heatRunning = FALSE;      // Stores whether the heater is currently running or not
 boolean coolRunning = FALSE;      // Stores whether the AC is currently running or not
-long currentTemp = 0.0;           // Current room temperature
 int serialSpeed = 9600;           // Default serial comm speed
 long oldTemp = 0;                 // Used to only update the currentTemp if the temp has changed
-unsigned long timeOut;            // Backlight timeout variable
-boolean editable = FALSE;         // Determines whether or not button presses will do anything, used to avoid accidental changes
-char* menu[] = {"Cooling", "Heating"};  // Menu display for either setting the high point or the low point of the temp range
-int menuPosition = 1;             // Current position in the setting menu
 unsigned long heatLastRan;        // Stores the time the heater last ran
 unsigned long coolLastRan;        // Stores the time the AC last ran
 
-// -------------Library Interaction--------------
-// Data wire is plugged into busPin on the Arduino
-#define ONE_WIRE_BUS busPin
 
-// Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
+
+
+
+
+
+
+
+
+
+// -------------Library Interaction--------------
+
+#define ONE_WIRE_BUS busPin       // Data wire is plugged into busPin on the Arduino
+
+// Setup oneWire to communicate with OneWire devices (not just Maxim/Dallas temperature ICs)
 OneWire oneWire(ONE_WIRE_BUS);
 
 // Pass our oneWire reference to Dallas Temperature. 
@@ -61,6 +108,30 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 #define ON 0x7            // For single color LCD, set on to white
 #define OFF 0x0           // For single color LCD, set off to black
 
+
+
+
+
+
+void setup()
+{
+
+  
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ----------------------------------------------------------------------------------------
 // Function Name: setup()
 // Parameters:    None
@@ -69,17 +140,29 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 // ----------------------------------------------------------------------------------------
 void setup(){
 
-  pinMode(busPin,INPUT);  // Designate temperature bus pin data direction
-  pinMode(heatPin,OUTPUT);                // Heat circuit relay 
-  pinMode(coolPin,OUTPUT);                // Cooling circuit relay
-  Serial.begin(serialSpeed);
+  setup_Network();           // Do all the things necessary to get the network protocol going
 
-  sensors.begin();        // Start up the library. IC Default is 9 bit. If you have troubles consider upping it 12. Ups the delay
-  lcd.begin(16, 2);       // set up the LCD's number of columns and rows
-  lcd.setBacklight(ON);   // Start off with backlight on until time-out
-  timeOut = millis();     // Set the initial backlight time
+  // --------------- Relay Setup ---------------
+  pinMode(heatPin,OUTPUT);   // Heat circuit relay 
+  pinMode(coolPin,OUTPUT);   // Cooling circuit relay
+
+
+  // --------------- Temperature Setup ---------------
+  pinMode(busPin,INPUT);     // Designate temperature bus pin data direction
+  sensors.begin();            // Start up the library. IC Default is 9 bit. If you have troubles consider upping it 12. Ups the delay
+
+  // --------------- LCD Setup ---------------
+  lcd.begin(16, 2);           // set up the LCD's number of columns and rows
+  lcd.setBacklight(ON);       // Start off with backlight on until time-out
+  timeOut = millis();         // Set the initial backlight time
 
 }
+
+
+
+
+
+
 
 // ----------------------------------------------------------------------------------------
 // Function Name: loop()
@@ -88,7 +171,7 @@ void setup(){
 // Description:   This is the main executing block of the program, calling all ancillary functions to operate the Arduino
 // ----------------------------------------------------------------------------------------
 void loop(){
-  if ((millis() - timeOut) > 30000) {                   // Turn on backlight for 30 seconds, else turn it off
+  if ((millis() - timeOut) > 30000) {   // Turn on backlight for 30 seconds, else turn it off
     lcd.setBacklight(OFF);
     editable == FALSE;
   }else {
@@ -133,7 +216,7 @@ void loop(){
 // ----------------------------------------------------------------------------------------
 void powerControl(){
   
-  // TODO: Add in fan relay control
+  // TODO: __________________________Add in fan relay control____________________
 
 
   // This executes if the heater is running and it gets warm enough to turn off.
@@ -274,5 +357,32 @@ boolean getTemp(){
   }
 }
 
+
+// ----------------------------------------------------------------------------------------
+// Function Name: setup_Network()
+// Parameters:    None
+// Returns:       None
+// Description:   This function does all the prep work to create a network connection
+// ----------------------------------------------------------------------------------------
+void setup_Network() {
+  
+  // TODO: _________________________REMOVE ALL Serial stuff when it works________________________
+
+  // Open serial communications and wait for port to open:
+  Serial.begin(serialSpeed);
+   while (!Serial) {
+    ; // wait for serial port to connect. Needed for Leonardo only
+  }
+
+
+  // start Ethernet and UDP
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println("Failed to configure Ethernet using DHCP");
+    // no point in carrying on, so do nothing forevermore:
+    for(;;)
+      ;
+  }
+  Udp.begin(localPort);
+}
   
 
