@@ -140,7 +140,7 @@ void setup()
 // ----------------------------------------------------------------------------------------
 void setup(){
 
-  setup_Network();           // Do all the things necessary to get the network protocol going
+  setup_network();           // Do all the things necessary to get the network protocol going
 
   // --------------- Relay Setup ---------------
   pinMode(heatPin,OUTPUT);   // Heat circuit relay 
@@ -171,6 +171,9 @@ void setup(){
 // Description:   This is the main executing block of the program, calling all ancillary functions to operate the Arduino
 // ----------------------------------------------------------------------------------------
 void loop(){
+
+  setup_time();
+
   if ((millis() - timeOut) > 30000) {   // Turn on backlight for 30 seconds, else turn it off
     lcd.setBacklight(OFF);
     editable == FALSE;
@@ -183,7 +186,7 @@ void loop(){
   uint8_t buttons = lcd.readButtons();  // Constantly check to see if something has been put on the bus
   
   // --------------Handle updating Temp Change Display---------------------
-  if (getTemp()) {                      // Constantly check to see if the temperature has changed, and update appropriately
+  if (get_temp()) {                      // Constantly check to see if the temperature has changed, and update appropriately
     lcd.clear();
     lcd.print("Current Temp: ");
     lcd.print(currentTemp);
@@ -198,23 +201,23 @@ void loop(){
     if (buttons & BUTTON_SELECT) {      // Allow parameters to be changed only if the Select button has been pressed first
       editable = TRUE;
     }
-    if (editable) {                     // go to buttonHandler to handle menu switching and parameter manipulations
-      buttonHandler(buttons);
+    if (editable) {                     // go to button_handler to handle menu switching and parameter manipulations
+      button_handler(buttons);
     }
   }
   
   // --------------Handle Heat and Cooling Cycles---------------------
-  powerControl();
+  power_control();
   
 }
 
 // ----------------------------------------------------------------------------------------
-// Function Name: powerControlHandler()
+// Function Name: power_controlHandler()
 // Parameters:    None
 // Returns:       None
 // Description:   This function will handle turning AC or Heat off and on based on current temp, timers, and setpoints
 // ----------------------------------------------------------------------------------------
-void powerControl(){
+void power_control(){
   
   // TODO: __________________________Add in fan relay control____________________
 
@@ -256,12 +259,12 @@ void powerControl(){
 
 
 // ----------------------------------------------------------------------------------------
-// Function Name: buttonHandler()
+// Function Name: button_handler()
 // Parameters:    None
 // Returns:       Boolean, True if the temperature has changed, else False
 // Description:   This function polls the temp sensors, retrieves the values, and then returns
 // ----------------------------------------------------------------------------------------
-boolean buttonHandler(uint8_t buttons){
+boolean button_handler(uint8_t buttons){
 
   // --------------PARAMETERS---------------------
   int heatModifier = 0;
@@ -329,19 +332,19 @@ boolean buttonHandler(uint8_t buttons){
 }
 
 // ----------------------------------------------------------------------------------------
-// Function Name: getTemp()
+// Function Name: get_temp()
 // Parameters:    None
 // Returns:       Boolean, True if the temperature has changed, else False
 // Description:   This function polls the temp sensors, retrieves the values, and then returns
 // ----------------------------------------------------------------------------------------
-boolean getTemp(){
+boolean get_temp(){
   currentTemp = 0;
   long temp = 0;
   sensors.requestTemperatures(); // Send the command to the device to get temperatures
   
   // Go through devices and read the temperatures
   for(int x = 0; x < numOfDevices; x++){
-    temp = sensors.getTempF(addrs[x]);
+    temp = sensors.get_tempF(addrs[x]);
     if(temp != currentTemp){
       currentTemp = temp;
     }      
@@ -359,12 +362,12 @@ boolean getTemp(){
 
 
 // ----------------------------------------------------------------------------------------
-// Function Name: setup_Network()
+// Function Name: setup_network()
 // Parameters:    None
 // Returns:       None
 // Description:   This function does all the prep work to create a network connection
 // ----------------------------------------------------------------------------------------
-void setup_Network() {
+void setup_network() {
   
   // TODO: _________________________REMOVE ALL Serial stuff when it works________________________
 
@@ -385,4 +388,88 @@ void setup_Network() {
   Udp.begin(localPort);
 }
   
+// ----------------------------------------------------------------------------------------
+// Function Name: get_time()
+// Parameters:    None
+// Returns:       None
+// Description:   TODO ____________________________________________________
+// ----------------------------------------------------------------------------------------
+void get_time()
+{
+  sendNTPpacket(timeServer); // send an NTP packet to a time server
 
+    // wait to see if a reply is available
+  delay(1000);  
+  if ( Udp.parsePacket() ) {  
+    // We've received a packet, read the data from it
+    Udp.read(packetBuffer,NTP_PACKET_SIZE);  // read the packet into the buffer
+
+    //the timestamp starts at byte 40 of the received packet and is four bytes,
+    // or two words, long. First, esxtract the two words:
+
+    unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
+    unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);  
+    // combine the four bytes (two words) into a long integer
+    // this is NTP time (seconds since Jan 1 1900):
+    unsigned long secsSince1900 = highWord << 16 | lowWord;  
+    Serial.print("Seconds since Jan 1 1900 = " );
+    Serial.println(secsSince1900);              
+
+    // now convert NTP time into everyday time:
+    Serial.print("Unix time = ");
+    // Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
+    const unsigned long seventyYears = 2208988800UL;    
+    // subtract seventy years:
+    unsigned long epoch = secsSince1900 - seventyYears;  
+    // print Unix time:
+    Serial.println(epoch);                              
+
+
+    // print the hour, minute and second:
+    Serial.print("The UTC time is ");       // UTC is the time at Greenwich Meridian (GMT)
+    Serial.print((epoch  % 86400L) / 3600); // print the hour (86400 equals secs per day)
+    Serial.print(':');  
+    if ( ((epoch % 3600) / 60) < 10 ) {
+      // In the first 10 minutes of each hour, we'll want a leading '0'
+      Serial.print('0');
+    }
+    Serial.print((epoch  % 3600) / 60); // print the minute (3600 equals secs per minute)
+    Serial.print(':');
+    if ( (epoch % 60) < 10 ) {
+      // In the first 10 seconds of each minute, we'll want a leading '0'
+      Serial.print('0');
+    }
+    Serial.println(epoch %60); // print the second
+  }
+  // wait ten seconds before asking for the time again
+  delay(10000);
+}
+
+// ----------------------------------------------------------------------------------------
+// Function Name: sendNTPpacket(IPAddress& address)
+// Parameters:    IP Address
+// Returns:       Unsigned Long
+// Description:   send an NTP request to the time server at the given address
+// ----------------------------------------------------------------------------------------
+unsigned long sendNTPpacket(IPAddress& address)
+{
+  // set all bytes in the buffer to 0
+  memset(packetBuffer, 0, NTP_PACKET_SIZE);
+  // Initialize values needed to form NTP request
+  // (see URL above for details on the packets)
+  packetBuffer[0] = 0b11100011;   // LI, Version, Mode
+  packetBuffer[1] = 0;     // Stratum, or type of clock
+  packetBuffer[2] = 6;     // Polling Interval
+  packetBuffer[3] = 0xEC;  // Peer Clock Precision
+  // 8 bytes of zero for Root Delay & Root Dispersion
+  packetBuffer[12]  = 49;
+  packetBuffer[13]  = 0x4E;
+  packetBuffer[14]  = 49;
+  packetBuffer[15]  = 52;
+
+  // all NTP fields have been given values, now
+  // you can send a packet requesting a timestamp:         
+  Udp.beginPacket(address, 123); //NTP requests are to port 123
+  Udp.write(packetBuffer,NTP_PACKET_SIZE);
+  Udp.endPacket();
+}
