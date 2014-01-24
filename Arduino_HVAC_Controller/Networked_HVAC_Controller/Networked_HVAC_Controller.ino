@@ -71,7 +71,7 @@ boolean editable = FALSE;         // Determines whether or not button presses wi
 int heat = 70;                    // This is the default heater trigger temp setting
 int cool = 80;                    // This is the default cooling trigger temp setting
 int buffer = 2;                   // This is the range away from the setpoint the heat or AC will overcool/heat to prevent shorter cycles
-int cycleTime - 600000;           // The length of time to delay running the AC or heat to prevent short boolean
+int cycleTime = 600000;           // The length of time to delay running the AC or heat to prevent short boolean
 boolean heatRunning = FALSE;      // Stores whether the heater is currently running or not
 boolean coolRunning = FALSE;      // Stores whether the AC is currently running or not
 int serialSpeed = 9600;           // Default serial comm speed
@@ -112,13 +112,6 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 
 
-
-void setup()
-{
-
-  
-
-}
 
 
 
@@ -172,7 +165,7 @@ void setup(){
 // ----------------------------------------------------------------------------------------
 void loop(){
 
-  setup_time();
+  setup_network();
 
   if ((millis() - timeOut) > 30000) {   // Turn on backlight for 30 seconds, else turn it off
     lcd.setBacklight(OFF);
@@ -229,7 +222,6 @@ void power_control(){
       digitalWrite(heatPin,HIGH);
       return;
     }
-  }
 
   // This executes if the AC is running and it gets cool enough to turn off
   if (coolRunning && (currentTemp < (cool - buffer))) {
@@ -238,17 +230,16 @@ void power_control(){
       digitalWrite(coolPin,HIGH);
       return;
     }
-  }
 
   // This executes if it gets cold enough and the heater has not run for a minimum time (short cycle protection)
-  if ((currentTemp < heat) && ((millis() - heatLastRan) > cycleTime) {
+  if ((currentTemp < heat) && ((millis() - heatLastRan) > cycleTime)) {
     digitalWrite(heatPin,HIGH);
     heatRunning = TRUE;
     return;
   }
 
   // This executes if it gets hot enough and the AC has not run for 10 minutes (short cycle protection)
-  if ((currentTemp > cool) && ((millis() - coolLastRan) > 600000) {
+  if ((currentTemp > cool) && ((millis() - coolLastRan) > 600000)) {
     digitalWrite(coolPin,HIGH);
     coolRunning = TRUE;
     return;
@@ -344,7 +335,7 @@ boolean get_temp(){
   
   // Go through devices and read the temperatures
   for(int x = 0; x < numOfDevices; x++){
-    temp = sensors.get_tempF(addrs[x]);
+    temp = sensors.getTempF(addrs[x]);
     if(temp != currentTemp){
       currentTemp = temp;
     }      
@@ -373,17 +364,12 @@ void setup_network() {
 
   // Open serial communications and wait for port to open:
   Serial.begin(serialSpeed);
-   while (!Serial) {
-    ; // wait for serial port to connect. Needed for Leonardo only
-  }
-
 
   // start Ethernet and UDP
   if (Ethernet.begin(mac) == 0) {
     Serial.println("Failed to configure Ethernet using DHCP");
     // no point in carrying on, so do nothing forevermore:
-    for(;;)
-      ;
+    while(1){}
   }
   Udp.begin(localPort);
 }
