@@ -165,7 +165,7 @@ void setup(){
 // ----------------------------------------------------------------------------------------
 void loop(){
 
-  setup_network();
+  get_time();
 
   if ((millis() - timeOut) > 30000) {   // Turn on backlight for 30 seconds, else turn it off
     lcd.setBacklight(OFF);

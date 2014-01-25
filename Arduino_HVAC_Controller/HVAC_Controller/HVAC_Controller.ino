@@ -28,7 +28,7 @@ int cool = 80;                    // This is the default cooling trigger temp se
 int buffer = 2;                   // This is the range away from the setpoint the heat or AC will overcool/heat to prevent shorter cycles
 int heatPin = 7;                  // Digital pin used for turning on the heater relay
 int coolPin = 8;                  // Digital pin used for turning on the AC relay
-int cycleTime - 600000;           // The length of time to delay running the AC or heat to prevent short cycling
+int cycleTime = 600000;           // The length of time to delay running the AC or heat to prevent short cycling
 boolean heatRunning = FALSE;      // Stores whether the heater is currently running or not
 boolean coolRunning = FALSE;      // Stores whether the AC is currently running or not
 long currentTemp = 0.0;           // Current room temperature
@@ -142,7 +142,6 @@ void powerControl(){
       digitalWrite(heatPin,HIGH);
       return;
     }
-  }
 
   // This executes if the AC is running and it gets cool enough to turn off
   if (coolRunning && (currentTemp < (cool - buffer))) {
@@ -151,17 +150,16 @@ void powerControl(){
       digitalWrite(coolPin,HIGH);
       return;
     }
-  }
 
   // This executes if it gets cold enough and the heater has not run for a minimum time (short cycle protection)
-  if ((currentTemp < heat) && ((millis() - heatLastRan) > cycleTime) {
+  if ((currentTemp < heat) && ((millis() - heatLastRan) > cycleTime)) {
     digitalWrite(heatPin,HIGH);
     heatRunning = TRUE;
     return;
   }
 
   // This executes if it gets hot enough and the AC has not run for 10 minutes (short cycle protection)
-  if ((currentTemp > cool) && ((millis() - coolLastRan) > 600000) {
+  if ((currentTemp > cool) && ((millis() - coolLastRan) > 600000)) {
     digitalWrite(coolPin,HIGH);
     coolRunning = TRUE;
     return;
