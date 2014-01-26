@@ -174,31 +174,33 @@ void loop(){
     lcd.setBacklight(ON);
   }
 
-  lcd.setCursor(0, 0);                  // Starting postion of character printing
+  
   
   uint8_t buttons = lcd.readButtons();  // Constantly check to see if something has been put on the bus
   
-  // --------------Handle updating Temp Change Display---------------------
-  if (get_temp()) {                      // Constantly check to see if the temperature has changed, and update appropriately
+  // --------------Handle updating Temp and Time change display---------------------
+  if ((millis() - timeDelay) > 10000) {    // Update every 10 seconds
+    lcd.setCursor(0, 0);                  // Starting postion of character printing
     lcd.clear();
     lcd.print("Current Temp: ");
+    get_temp();
     lcd.print(currentTemp);
-  }
-  
-  if ((millis() - timeDelay) > 10000) {
+    
     hoursSeconds = get_time();
+    lcd.setCursor(5, 1);
+    // print the hour and minute:
+    lcd.print((hoursSeconds  % 86400L) / 3600); // print the hour (86400 equals secs per day)
+    lcd.print(':');  
+    if ( ((hoursSeconds % 3600) / 60) < 10 ) {
+        // In the first 10 minutes of each hour, we'll want a leading '0'
+        lcd.print('0');
+    }
+    lcd.print((hoursSeconds  % 3600) / 60); // print the minute (3600 equals secs per minute)
+    
     timeDelay = millis();
   }
   
-  lcd.setCursor(5, 1);
-  // print the hour and minute:
-  lcd.print((hoursSeconds  % 86400L) / 3600); // print the hour (86400 equals secs per day)
-  lcd.print(':');  
-  if ( ((hoursSeconds % 3600) / 60) < 10 ) {
-    // In the first 10 minutes of each hour, we'll want a leading '0'
-    lcd.print('0');
-  }
-  lcd.print((hoursSeconds  % 3600) / 60); // print the minute (3600 equals secs per minute)
+
   
   // --------------Handle Button Presses---------------------
   if (buttons) {
