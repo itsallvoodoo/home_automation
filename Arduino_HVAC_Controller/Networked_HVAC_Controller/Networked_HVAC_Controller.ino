@@ -57,6 +57,7 @@ IPAddress timeServer(132, 163, 4, 101);     // time-a.timefreq.bldrdoc.gov NTP s
 const int NTP_PACKET_SIZE= 48;              // NTP time stamp is in the first 48 bytes of the message
 byte packetBuffer[ NTP_PACKET_SIZE];        //buffer to hold incoming and outgoing packets
 EthernetUDP Udp;                            // A UDP instance to let us send and receive packets over UDP
+unsigned long hoursSeconds;                 // Return variable for the get_Time function
 
 
 // --------------- LCD Shield Variables ---------------
@@ -165,8 +166,6 @@ void setup(){
 // ----------------------------------------------------------------------------------------
 void loop(){
 
-  get_time();
-
   if ((millis() - timeOut) > 30000) {   // Turn on backlight for 30 seconds, else turn it off
     lcd.setBacklight(OFF);
     editable == FALSE;
@@ -174,7 +173,7 @@ void loop(){
     lcd.setBacklight(ON);
   }
 
-  lcd.setCursor(0, 1);                  // Starting postion of character printing
+  lcd.setCursor(0, 0);                  // Starting postion of character printing
   
   uint8_t buttons = lcd.readButtons();  // Constantly check to see if something has been put on the bus
   
@@ -184,6 +183,18 @@ void loop(){
     lcd.print("Current Temp: ");
     lcd.print(currentTemp);
   }
+  
+  hoursSeconds = get_time();
+  
+  lcd.setCursor(5, 1);
+  // print the hour and minute:
+  lcd.print((hoursSeconds  % 86400L) / 3600); // print the hour (86400 equals secs per day)
+  lcd.print(':');  
+  if ( ((hoursSeconds % 3600) / 60) < 10 ) {
+    // In the first 10 minutes of each hour, we'll want a leading '0'
+    lcd.print('0');
+  }
+  lcd.print((hoursSeconds  % 3600) / 60); // print the minute (3600 equals secs per minute)
   
   // --------------Handle Button Presses---------------------
   if (buttons) {
@@ -377,12 +388,13 @@ void setup_network() {
 // ----------------------------------------------------------------------------------------
 // Function Name: get_time()
 // Parameters:    None
-// Returns:       None
+// Returns:       An unsigned long representing time in hours and minutes 
 // Description:   TODO ____________________________________________________
 // ----------------------------------------------------------------------------------------
-void get_time()
+unsigned long get_time()
 {
   sendNTPpacket(timeServer); // send an NTP packet to a time server
+  unsigned long epoch;
 
     // wait to see if a reply is available
   delay(1000);  
@@ -397,38 +409,20 @@ void get_time()
     unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);  
     // combine the four bytes (two words) into a long integer
     // this is NTP time (seconds since Jan 1 1900):
-    unsigned long secsSince1900 = highWord << 16 | lowWord;  
-    Serial.print("Seconds since Jan 1 1900 = " );
-    Serial.println(secsSince1900);              
+    unsigned long secsSince1900 = highWord << 16 | lowWord;               
 
     // now convert NTP time into everyday time:
-    Serial.print("Unix time = ");
     // Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
     const unsigned long seventyYears = 2208988800UL;    
     // subtract seventy years:
-    unsigned long epoch = secsSince1900 - seventyYears;  
-    // print Unix time:
-    Serial.println(epoch);                              
+    epoch = secsSince1900 - seventyYears - (5 * 3600);                             
 
 
-    // print the hour, minute and second:
-    Serial.print("The UTC time is ");       // UTC is the time at Greenwich Meridian (GMT)
-    Serial.print((epoch  % 86400L) / 3600); // print the hour (86400 equals secs per day)
-    Serial.print(':');  
-    if ( ((epoch % 3600) / 60) < 10 ) {
-      // In the first 10 minutes of each hour, we'll want a leading '0'
-      Serial.print('0');
-    }
-    Serial.print((epoch  % 3600) / 60); // print the minute (3600 equals secs per minute)
-    Serial.print(':');
-    if ( (epoch % 60) < 10 ) {
-      // In the first 10 seconds of each minute, we'll want a leading '0'
-      Serial.print('0');
-    }
-    Serial.println(epoch %60); // print the second
+
   }
   // wait ten seconds before asking for the time again
   delay(10000);
+  return epoch;
 }
 
 // ----------------------------------------------------------------------------------------
