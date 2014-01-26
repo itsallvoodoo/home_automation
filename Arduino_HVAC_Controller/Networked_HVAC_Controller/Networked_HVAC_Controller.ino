@@ -185,7 +185,7 @@ void loop(){
     lcd.print(currentTemp);
   }
   
-  if ((millis() - timeDelay) < 10000) {
+  if ((millis() - timeDelay) > 10000) {
     hoursSeconds = get_time();
     timeDelay = millis();
   }
