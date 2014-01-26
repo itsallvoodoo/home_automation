@@ -57,7 +57,8 @@ IPAddress timeServer(132, 163, 4, 101);     // time-a.timefreq.bldrdoc.gov NTP s
 const int NTP_PACKET_SIZE= 48;              // NTP time stamp is in the first 48 bytes of the message
 byte packetBuffer[ NTP_PACKET_SIZE];        //buffer to hold incoming and outgoing packets
 EthernetUDP Udp;                            // A UDP instance to let us send and receive packets over UDP
-unsigned long hoursSeconds;                 // Return variable for the get_Time function
+unsigned long hoursSeconds = 0;             // Return variable for the get_Time function
+unsigned long timeDelay = 0;                // Counter to prevent time from getting retrieved too often
 
 
 // --------------- LCD Shield Variables ---------------
@@ -184,7 +185,10 @@ void loop(){
     lcd.print(currentTemp);
   }
   
-  hoursSeconds = get_time();
+  if ((millis() - timeDelay) < 10000) {
+    hoursSeconds = get_time();
+    timeDelay = millis();
+  }
   
   lcd.setCursor(5, 1);
   // print the hour and minute:
@@ -415,13 +419,9 @@ unsigned long get_time()
     // Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
     const unsigned long seventyYears = 2208988800UL;    
     // subtract seventy years:
-    epoch = secsSince1900 - seventyYears - (5 * 3600);                             
-
-
+    epoch = secsSince1900 - seventyYears - (5 * 3600);
 
   }
-  // wait ten seconds before asking for the time again
-  delay(10000);
   return epoch;
 }
 
