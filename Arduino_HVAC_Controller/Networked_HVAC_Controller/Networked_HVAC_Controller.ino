@@ -397,7 +397,7 @@ void setup_network() {
 // Returns:       An unsigned long representing time in hours and minutes 
 // Description:   TODO ____________________________________________________
 // ----------------------------------------------------------------------------------------
-unsigned long get_time()
+char* get_time()
 {
   sendNTPpacket(timeServer); // send an NTP packet to a time server
   unsigned long epoch;
@@ -424,7 +424,7 @@ unsigned long get_time()
     epoch = secsSince1900 - seventyYears - (5 * 3600);
 
   }
-  return epoch;
+  return timeString;
 }
 
 // ----------------------------------------------------------------------------------------
