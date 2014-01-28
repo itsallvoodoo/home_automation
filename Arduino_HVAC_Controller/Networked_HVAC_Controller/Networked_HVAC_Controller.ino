@@ -377,7 +377,7 @@ void setup_network() {
     }
   }
   //Serial.print("IP number assigned by DHCP is ");
-  Serial.println(Ethernet.localIP());
+  //Serial.println(Ethernet.localIP());
   Udp.begin(localPort);
   //Serial.println("waiting for sync");
   setSyncProvider(getNtpTime);
@@ -391,14 +391,17 @@ void setup_network() {
 // ----------------------------------------------------------------------------------------
 String get_time() {
   String timeString = "";
-    if (timeStatus() != timeNotSet) {
-      timeString = hour() + ":";
-      if(minute() < 10) {
-        timeString = timeString + "0";
-      }
-      timeString = timeString + minute() + "  " + month() + " " + day() + " " + year();
+  if (timeStatus() != timeNotSet) {
+    timeString = (String) hour() + ":";
+    if(minute() < 10) {
+      timeString = timeString + "0";
+    }
+    timeString = timeString + (String) minute() + "  " + (String) month() + " " + (String) day() + " " + (String) year();
+    return timeString;
   }
-  return timeString;
+  else {
+    return "Time not set";
+  }
 }
 
 
