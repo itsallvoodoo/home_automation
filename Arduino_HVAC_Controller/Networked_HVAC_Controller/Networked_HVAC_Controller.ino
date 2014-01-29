@@ -1,7 +1,7 @@
 // name:     Networked_HVAC_Controller.ino
 // author:   Chad Hobbs
 // created:  130121
-// last edit: 130121
+// last edit: 130128
 //
 // description: This program controls multiple temperature sensors via the 1-wire protocol, and turns off and on an HVAC system based on
 // presets. It communicates with a server to provide data and remote access/control.
@@ -58,7 +58,6 @@ EthernetUDP Udp;                            // A UDP instance to let us send and
 unsigned long hoursSeconds = 0;             // Return variable for the get_Time function
 unsigned long timeDelay = 0;                // Counter to prevent time from getting retrieved too often
 const int timeZone = -5;                    // Eastern Standard Time (USA)
-time_t prevDisplay = 0;                     // TODO REMOVE _________________________________
 
 
 // --------------- NTP Variables ---------------
@@ -66,14 +65,11 @@ const int NTP_PACKET_SIZE = 48;             // NTP time is in the first 48 bytes
 byte packetBuffer[NTP_PACKET_SIZE];         //buffer to hold incoming & outgoing packets
 
 
-
-
 // --------------- LCD Shield Variables ---------------
 unsigned long timeOut;            // Backlight timeout variable
 char* menu[] = {"Cooling", "Heating"};  // Menu display for either setting the high point or the low point of the temp range
 int menuPosition = 1;             // Current position in the setting menu
 boolean editable = FALSE;         // Determines whether or not button presses will do anything, used to avoid accidental changes
-
 
 
 // --------------- General Variables ---------------
@@ -87,15 +83,6 @@ int serialSpeed = 9600;           // Default serial comm speed
 long oldTemp = 0;                 // Used to only update the currentTemp if the temp has changed
 unsigned long heatLastRan;        // Stores the time the heater last ran
 unsigned long coolLastRan;        // Stores the time the AC last ran
-
-
-
-
-
-
-
-
-
 
 
 // -------------Library Interaction--------------
@@ -116,15 +103,6 @@ DeviceAddress insideThermometer = { 0x10, 0x39, 0xe2, 0x82, 0x02, 0x08, 0x00, 0x
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 #define ON 0x7            // For single color LCD, set on to white
 #define OFF 0x0           // For single color LCD, set off to black
-
-
-
-
-
-
-
-
-
 
 
 
@@ -174,6 +152,11 @@ void setup(){
 // ----------------------------------------------------------------------------------------
 void loop(){
 
+  uint8_t buttons = lcd.readButtons();  // Constantly check to see if something has been put on the bus
+
+  power_control();                      // Handle Heat and Cooling Cycles
+ 
+
   if ((millis() - timeOut) > 30000) {   // Turn on backlight for 30 seconds, else turn it off
     lcd.setBacklight(OFF);
     editable == FALSE;
@@ -183,7 +166,6 @@ void loop(){
 
   
   
-  uint8_t buttons = lcd.readButtons();  // Constantly check to see if something has been put on the bus
   
   // --------------Handle updating Temp and Time change display---------------------
   if ((millis() - timeDelay) > 10000) {    // Update every 10 seconds
@@ -193,7 +175,6 @@ void loop(){
     lcd.print(get_temp());
     lcd.setCursor(0, 1);
     lcd.print(get_time());
-    
     timeDelay = millis();
   }
   
@@ -203,7 +184,6 @@ void loop(){
   if (buttons) {
     timeOut = millis();
     lcd.setBacklight(ON);
-    
 
     if (buttons & BUTTON_SELECT) {      // Allow parameters to be changed only if the Select button has been pressed first
       editable = TRUE;
@@ -213,8 +193,7 @@ void loop(){
     }
   }
   
-  // --------------Handle Heat and Cooling Cycles---------------------
-  power_control();
+  
   
 }
 
@@ -386,8 +365,8 @@ void setup_network() {
 // ----------------------------------------------------------------------------------------
 // Function Name: get_time()
 // Parameters:    None
-// Returns:       An unsigned long representing time in hours and minutes 
-// Description:   TODO ____________________________________________________
+// Returns:       A string representing the time and date 
+// Description:   This function gets the current time and returns it as a string to display
 // ----------------------------------------------------------------------------------------
 String get_time() {
   String timeString = "";
@@ -437,7 +416,7 @@ void sendNTPpacket(IPAddress &address) {
 // Function Name: getNtpTime()
 // Parameters:    None
 // Returns:       Variable time_t, a time object
-// Description:   TODO
+// Description:   Queries the NTP server to get the current universal time, in UTC
 // ----------------------------------------------------------------------------------------
 time_t getNtpTime()
 {
