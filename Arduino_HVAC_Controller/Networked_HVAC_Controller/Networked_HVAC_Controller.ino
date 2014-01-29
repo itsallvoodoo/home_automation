@@ -168,6 +168,7 @@ void loop(){
   
   
   // --------------Handle updating Temp and Time change display---------------------
+
   if ((millis() - timeDelay) > 10000) {    // Update every 10 seconds
     lcd.setCursor(5, 0);                  // Starting postion of character printing
     lcd.clear();
@@ -176,6 +177,21 @@ void loop(){
     lcd.setCursor(0, 1);
     lcd.print(get_time());
     timeDelay = millis();
+  } else if (editable) {
+    // Print proper menu title and setpoint
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(menu[menuPosition]);
+    lcd.setCursor(0, 1);
+    lcd.print("Setpoint: ");
+
+    if (menuPosition == 0) {
+      lcd.print(cool);
+    }
+    if (menuPosition == 1) {
+      lcd.print(heat);
+    }
+
   }
   
 
@@ -253,10 +269,6 @@ boolean button_handler(uint8_t buttons){
   // --------------PARAMETERS---------------------
   int heatModifier = 0;
   int coolModifier = 0;
-    
-
-  // --------------SETUP---------------------
-  lcd.clear();
 
   // If the UP Button is pushed, increasing the setpoint
   if (buttons & BUTTON_UP) {
@@ -299,19 +311,6 @@ boolean button_handler(uint8_t buttons){
   // If anything has been modified, update accordingly
   heat = heat + heatModifier;
   cool = cool + coolModifier;
-  
-  // Print proper menu title and setpoint
-  lcd.setCursor(0, 0);
-  lcd.print(menu[menuPosition]);
-  lcd.setCursor(0, 1);
-  lcd.print("Setpoint: ");
-
-  if (menuPosition == 0) {
-    lcd.print(cool);
-  }
-  if (menuPosition == 1) {
-    lcd.print(heat);
-  }
 
 }
 
