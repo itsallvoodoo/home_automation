@@ -10,16 +10,14 @@
 <div id="container">
 	<div id="header">
        	<h1>Hobbs Home Automation Server</span></h1>
-        <h2></h2>
+        <h2>Security</h2>
     </div>   
         
     <div id="menu">
         <ul>
-           	<li class="menuitem"><a href="/index.html">Home</a></li>
-            <li class="menuitem"><a href="#">Menu2</a></li>
-            <li class="menuitem"><a href="#">Menu3</a></li>
-            <li class="menuitem"><a href="#">Menu4</a></li>
-            <li class="menuitem"><a href="security.php">Security</a></li>
+            <li class="menuitem"><a href="/index.html">Home</a></li>
+            <li class="menuitem"><a href="/access/access.php">Access Control</a></li>
+            <li class="menuitem"><a href="/security/security.php">Security</a></li>
             <li class="menuitem"><a href="/hvac/hvac.php">HVAC</a></li>
         </ul>
     </div>

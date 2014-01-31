@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" type="text/css" href="style.css" />
+<link rel="stylesheet" type="text/css" href="/style.css" />
 <title>Hobbs Home Automation Server</title>
 </head>
 
@@ -10,12 +10,12 @@
 <div id="container">
 	<div id="header">
        	<h1>Hobbs Home Automation Server</span></h1>
-        <h2></h2>
+        <h2>Access Control</h2>
     </div>   
         
     <div id="menu">
         <ul>
-           	<li class="menuitem"><a href="/index.html">Home</a></li>
+            <li class="menuitem"><a href="/index.html">Home</a></li>
             <li class="menuitem"><a href="/access/access.php">Access Control</a></li>
             <li class="menuitem"><a href="/security/security.php">Security</a></li>
             <li class="menuitem"><a href="/hvac/hvac.php">HVAC</a></li>
