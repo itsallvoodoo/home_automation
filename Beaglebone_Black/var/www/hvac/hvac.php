@@ -82,6 +82,22 @@
                     }
                 echo "</table>";
 
+                $sql="SELECT * FROM tempdata ORDER BY tempId DESC LIMIT 10";
+
+                $result = mysqli_query($con,$sql);
+                // Print out rows
+                $prefix = '';
+                echo "[\n";
+                while ($row = mysqli_fetch_array($result)) {
+                    echo $prefix . " {\n";
+                    echo '  "tempId": "' . $row['tempId'] . '",' . "\n";
+                    echo '  "tempEntry": ' . $row['tempEntry'] . ',' . "\n";
+                    echo '  "tempTime": ' . $row['tempTime'] . '' . "\n";
+                    echo " }";
+                    $prefix = ",\n";
+                }
+                echo "\n]";
+
                 mysqli_close($con);
             ?> 
         	<p>&nbsp;</p>
@@ -90,6 +106,7 @@
         	<p>&nbsp;</p>
             <p>&nbsp;</p>
             <canvas id="canvas" height="450" width="600"></canvas>
+
             <script>
 
                 var lineChartData = {
@@ -101,13 +118,6 @@
                             pointColor : "rgba(220,220,220,1)",
                             pointStrokeColor : "#fff",
                             data : [65,59,90,81,56,55,40]
-                        },
-                        {
-                            fillColor : "rgba(151,187,205,0.5)",
-                            strokeColor : "rgba(151,187,205,1)",
-                            pointColor : "rgba(151,187,205,1)",
-                            pointStrokeColor : "#fff",
-                            data : [28,48,40,19,96,27,100]
                         }
                     ]
                     
