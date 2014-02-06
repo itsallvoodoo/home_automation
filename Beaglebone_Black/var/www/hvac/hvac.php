@@ -82,42 +82,52 @@
                     }
                 echo "</table>";
 
-                $sql="SELECT * FROM tempdata ORDER BY tempId DESC LIMIT 10";
+                $sql="SELECT * FROM (SELECT * FROM tempdata ORDER BY tempId DESC LIMIT 10) AS `table` ORDER BY tempId ASC";
 
                 $result = mysqli_query($con,$sql);
-                // Print out rows
-                $prefix = '';
-                echo "[\n";
-                while ($row = mysqli_fetch_array($result)) {
-                    echo $prefix . " {\n";
-                    echo '  "tempId": "' . $row['tempId'] . '",' . "\n";
-                    echo '  "tempEntry": ' . $row['tempEntry'] . ',' . "\n";
-                    echo '  "tempTime": ' . $row['tempTime'] . '' . "\n";
-                    echo " }";
-                    $prefix = ",\n";
-                }
-                echo "\n]";
-
-                mysqli_close($con);
+                
             ?> 
         	<p>&nbsp;</p>
            	<p>&nbsp;</p>
-        	<p>This website is being served from a Beaglebone Black and is the same device that controls various functions around the house.</p>
         	<p>&nbsp;</p>
             <p>&nbsp;</p>
             <canvas id="canvas" height="450" width="600"></canvas>
 
             <script>
 
+                
+
                 var lineChartData = {
-                    labels : ["January","February","March","April","May","June","July"],
+                    labels : [ <?php
+
+                        $initial = True;
+
+                        while ($row = mysqli_fetch_array($result)) {
+                            if ($initial == False)  {
+                                echo ',';
+                            }
+                            echo '"' . date('H:i', strtotime($row['tempTime'])) . '"';
+                            $initial = False;
+                        }
+                    ?>],
                     datasets : [
                         {
                             fillColor : "rgba(220,220,220,0.5)",
                             strokeColor : "rgba(220,220,220,1)",
                             pointColor : "rgba(220,220,220,1)",
                             pointStrokeColor : "#fff",
-                            data : [65,59,90,81,56,55,40]
+                            data : [<?php
+                                        $initial = True;
+                                        $result = mysqli_query($con,$sql);
+                                        while ($row = mysqli_fetch_array($result)) {
+                                            if ($initial == False)  {
+                                                echo ',';
+                                            }
+                                            echo $row['tempEntry'];
+                                            $initial = False;
+                                        }
+                                        mysqli_close($con);  
+                            ?>]
                         }
                     ]
                     
