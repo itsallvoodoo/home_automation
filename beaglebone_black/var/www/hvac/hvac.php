@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<script src="../js/Chart/Chart.js"></script>
+<script src="../js/chart/Chart.js"></script>
 <meta name = "viewport" content = "initial-scale = 1, user-scalable = no">
         <style>
             canvas{
@@ -12,7 +12,7 @@
 </head>
 
 <body>
-<?php require '../header.php'; ?> 
+<?php require '../../includes/db_temp_connect.php'; ?> 
 <div id="container">
 		<div id="header">
         	<h1>Hobbs Home Automation Server</span></h1>
@@ -115,7 +115,7 @@
                                             if ($initial == False)  {
                                                 echo ',';
                                             }
-                                            echo $row['tempEntry'];
+                                            echo round($row['tempEntry'],2);
                                             $initial = False;
                                         }
                                         mysqli_close($con);  
