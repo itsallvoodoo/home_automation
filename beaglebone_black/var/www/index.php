@@ -1,3 +1,10 @@
+<?php
+    include_once '../includes/db_secure_connect.php';
+    include_once '../includes/functions.php';
+ 
+    sec_session_start();
+?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -15,7 +22,7 @@
         
     <div id="menu">
         <ul>
-            <li class="menuitem"><a href="/index.php">Home</a></li>
+           	<li class="menuitem"><a href="/index.php">Home</a></li>
             <li class="menuitem"><a href="/access/access.php">Access Control</a></li>
             <li class="menuitem"><a href="/security/security.php">Security</a></li>
             <li class="menuitem"><a href="/hvac/hvac.php">HVAC</a></li>
@@ -52,12 +59,26 @@
             
         <div id="content_top"></div>
         <div id="content_main">
+
+            <?php if (login_check($mysqli) == true) : ?>
+                <p>Welcome <?php echo htmlentities($_SESSION['username']); ?>!</p>
+                <p>
+                    This is an example protected page.  To access this page, users
+                    must be logged in.  At some stage, we'll also check the role of
+                    the user, so pages will be able to determine the type of user
+                    authorised to access the page.
+                </p>
+
+            <p>Return to <a href="index.php">login page</a></p>
+        <?php else : ?>
         	<h2>Welcome to Chad's Home Automation Server </h2>
         	<p>&nbsp;</p>
            	<p>&nbsp;</p>
         	<p>This website is being served from a Beaglebone Black and is the same device that controls various functions around the house.</p>
         	<p>&nbsp;</p>
             <p>&nbsp;</p>
+        <?php endif; ?>
+
         </div>
         <div id="content_bottom"></div>
             

@@ -21,7 +21,7 @@
         
         <div id="menu">
         	<ul>
-            <li class="menuitem"><a href="/index.html">Home</a></li>
+            <li class="menuitem"><a href="/index.php">Home</a></li>
             <li class="menuitem"><a href="/access/access.php">Access Control</a></li>
             <li class="menuitem"><a href="/security/security.php">Security</a></li>
             <li class="menuitem"><a href="/hvac/hvac.php">HVAC</a></li>
@@ -60,7 +60,7 @@
 
                 $sql="SELECT tempEntry FROM tempdata ORDER BY tempId DESC LIMIT 1";
 
-                $result = mysqli_query($con,$sql);
+                $result = mysqli_query($mysqli,$sql);
 
                 echo "<table>";
                 echo "<tr>";
@@ -76,7 +76,7 @@
 
                 $sql="SELECT * FROM (SELECT * FROM tempdata ORDER BY tempId DESC LIMIT 10) AS `table` ORDER BY tempId ASC";
 
-                $result = mysqli_query($con,$sql);
+                $result = mysqli_query($mysqli,$sql);
                 
             ?> 
         	<p>&nbsp;</p>
@@ -110,7 +110,7 @@
                             pointStrokeColor : "#fff",
                             data : [<?php
                                         $initial = True;
-                                        $result = mysqli_query($con,$sql);
+                                        $result = mysqli_query($mysqli,$sql);
                                         while ($row = mysqli_fetch_array($result)) {
                                             if ($initial == False)  {
                                                 echo ',';
