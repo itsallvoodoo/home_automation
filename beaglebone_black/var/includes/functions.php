@@ -47,10 +47,11 @@ function login($email, $password, $mysqli) {
             // If the user exists we check if the account is locked
             // from too many login attempts 
  
-            if (checkbrute($user_id, $mysqli) == "passed") { // true --------------------------------------
+            if (checkbrute($user_id, $mysqli) == true) {
                 // Account is locked 
                 // Send an email to user saying their account is locked
-                return "locked account"; // false -----------------------------------------
+                $result = 'locked';
+                return $result; // false -----------------------------------------
             } else {
                 // Check if the password in the database matches
                 // the password the user submitted.
@@ -69,20 +70,22 @@ function login($email, $password, $mysqli) {
                     $_SESSION['login_string'] = hash('sha512', 
                               $password . $user_browser);
                     // Login successful.
-                    return "passed"; // true --------------------------------------
+                    $result = 'success';
+                    return $result; // true --------------------------------------
                 } else {
                     // Password is not correct
                     // We record this attempt in the database
                     $now = time();
                     $mysqli->query("INSERT INTO login_attempts(user_id, time)
                                     VALUES ('$user_id', '$now')");
-                    return "bad try"; // false -----------------------------------------
+                    $result = 'bad try';
+                    return $result; // false -----------------------------------------
                 }
             }
         } else {
-            echo "no user found";
+            echo 'no user found';
             // No user exists.
-            return "no user found"; // false -----------------------------------------
+            //return 'no user found'; // false -----------------------------------------
         }
     }
 }
