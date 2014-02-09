@@ -47,10 +47,10 @@ function login($email, $password, $mysqli) {
             // If the user exists we check if the account is locked
             // from too many login attempts 
  
-            if (checkbrute($user_id, $mysqli) == true) {
+            if (checkbrute($user_id, $mysqli) == "passed") { // true --------------------------------------
                 // Account is locked 
                 // Send an email to user saying their account is locked
-                return false;
+                return "locked account"; // false -----------------------------------------
             } else {
                 // Check if the password in the database matches
                 // the password the user submitted.
@@ -69,24 +69,29 @@ function login($email, $password, $mysqli) {
                     $_SESSION['login_string'] = hash('sha512', 
                               $password . $user_browser);
                     // Login successful.
-                    return true;
+                    return "passed"; // true --------------------------------------
                 } else {
                     // Password is not correct
                     // We record this attempt in the database
                     $now = time();
                     $mysqli->query("INSERT INTO login_attempts(user_id, time)
                                     VALUES ('$user_id', '$now')");
-                    return false;
+                    return "bad try"; // false -----------------------------------------
                 }
             }
         } else {
+            echo "no user found";
             // No user exists.
-            return false;
+            return "no user found"; // false -----------------------------------------
         }
     }
 }
 
+// ------CURRENTLY BYPASSED FOR TESTING------
+
 function checkbrute($user_id, $mysqli) {
+
+    return false; // ----------------------DISABLED FOR TESTING---------------------------
     // Get timestamp of current time 
     $now = time();
  
@@ -160,7 +165,11 @@ function login_check($mysqli) {
     }
 }
 
+
+// ------CURRENTLY BYPASSED FOR TESTING------
 function esc_url($url) {
+
+    return $url; // -----------------------BYPASSING FOR TESTING---------------------------
  
     if ('' == $url) {
         return $url;

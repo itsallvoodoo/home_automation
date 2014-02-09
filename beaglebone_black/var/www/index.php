@@ -1,6 +1,6 @@
 <?php
-    include_once '../includes/db_secure_connect.php';
-    include_once '../includes/functions.php';
+    require '../includes/db_secure_connect.php';
+    require '../includes/functions.php';
  
     sec_session_start();
 ?>

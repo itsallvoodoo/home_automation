@@ -1,12 +1,14 @@
 <?php
-    include_once '../includes/db_secure_connect.php';
-    include_once '../includes/functions.php';
+    require '../includes/db_secure_connect.php';
+    require '../includes/functions.php';
      
     sec_session_start();
 
     if (login_check($mysqli) == true) {
+        echo "logged in"; // -----------------------TESTING -----------------------
         $logged = 'in';
     } else {
+        echo "logged out"; // -----------------------TESTING -----------------------
         $logged = 'out';
     }
 
