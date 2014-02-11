@@ -18,8 +18,8 @@
 <body>
 <div id="container">
     <div id="header">
-        <h1>Secure Login: Registration Form</span></h1>
-        <h2></h2>
+        <h1>Hobbs Home Automation Server</span></h1>
+        <h2>Registration</h2>
     </div>   
         
     <div id="menu">

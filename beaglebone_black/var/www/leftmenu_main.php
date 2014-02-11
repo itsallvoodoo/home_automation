@@ -1,4 +1,8 @@
 <?php
+
+    include_once 'includes/db_connect.php';
+    include_once 'includes/functions.php';
+    
     echo 	"<h3>Links</h3>       
     		<ul>";
     if (login_check($mysqli) == true) :

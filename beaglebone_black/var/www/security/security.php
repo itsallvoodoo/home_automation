@@ -1,59 +1,58 @@
+<?php
+    include_once '../includes/db_connect.php';
+    include_once '../includes/functions.php';
+ 
+    sec_session_start();
+?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" type="text/css" href="/style.css" />
-<title>Hobbs Home Automation Server</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <title>Hobbs Home Automation Server</title>
 </head>
 
 <body>
 <div id="container">
-	<div id="header">
-       	<h1>Hobbs Home Automation Server</span></h1>
+    <div id="header">
+        <h1>Hobbs Home Automation Server</span></h1>
         <h2>Security</h2>
     </div>   
         
     <div id="menu">
-        <ul>
-            <li class="menuitem"><a href="/index.php">Home</a></li>
-            <li class="menuitem"><a href="/access/access.php">Access Control</a></li>
-            <li class="menuitem"><a href="/security/security.php">Security</a></li>
-            <li class="menuitem"><a href="/hvac/hvac.php">HVAC</a></li>
-        </ul>
+            <?php include '../top_menu.php'; ?>
     </div>
         
     <div id="leftmenu">
 
-    <div id="leftmenu_top">
-    </div>
-
-		<div id="leftmenu_main">    
-            
-            <h3>Links</h3>
-                    
-            <ul>
-                <li><a href="#">Side1</a></li>
-                <li><a href="#">Side2</a></li>
-                <li><a href="#">Side3</a></li>
-                <li><a href="#">Side4</a></li>
-
-            </ul>
+        <div id="leftmenu_top"></div>
+        <div id="leftmenu_main">    
+            <?php include '../leftmenu_main.php'; ?>
         </div>
             
-        <div id="leftmenu_bottom">
-        </div>
+        <div id="leftmenu_bottom"></div>
     </div>
           
-	<div id="content">
+    <div id="content">
             
         <div id="content_top"></div>
         <div id="content_main">
-        	<h2>Welcome to Chad's Home Automation Server </h2>
-        	<p>&nbsp;</p>
-           	<p>&nbsp;</p>
-        	<p>This website is being served from a Beaglebone Black and is the same device that controls various functions around the house.</p>
-        	<p>&nbsp;</p>
-            <p>&nbsp;</p>
+
+            <?php if (login_check($mysqli) == true) : ?>
+                <p>
+                    Welcome <?php echo htmlentities($_SESSION['username']); ?>!
+                </p>
+                <p>
+                    <img src="sec_cam.jpg" alt="Example Footage" height="237" width="316">
+                </p>
+            <?php else : ?>
+                <p>
+                    <span class="error">You are not authorized to access this page.</span> Please <a href="../login.php">login</a>.
+                </p>
+            <?php endif; ?>
+
+
         </div>
         <div id="content_bottom"></div>
             

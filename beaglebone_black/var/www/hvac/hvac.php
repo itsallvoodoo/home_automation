@@ -20,12 +20,7 @@
         </div>   
         
         <div id="menu">
-        	<ul>
-            <li class="menuitem"><a href="/index.php">Home</a></li>
-            <li class="menuitem"><a href="/access/access.php">Access Control</a></li>
-            <li class="menuitem"><a href="/security/security.php">Security</a></li>
-            <li class="menuitem"><a href="/hvac/hvac.php">HVAC</a></li>
-            </ul>
+        	<?php include '../top_menu.php'; ?>
         </div>
         
         <div id="leftmenu">
@@ -33,17 +28,8 @@
         <div id="leftmenu_top"></div>
 
 				<div id="leftmenu_main">    
-                
-                <h3>Links</h3>
-                        
-                <ul>
-                    <li><a href="#">Side1</a></li>
-                    <li><a href="#">Side2</a></li>
-                    <li><a href="#">Side3</a></li>
-                    <li><a href="#">Side4</a></li>
-
-                </ul>
-</div>
+                    <?php include '../leftmenu_main.php'; ?>
+                </div>
                 
                 
               <div id="leftmenu_bottom"></div>

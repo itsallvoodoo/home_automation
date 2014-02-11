@@ -24,8 +24,8 @@
 <body>
 <div id="container">
     <div id="header">
-        <h1>Secure Login: Log In</span></h1>
-        <h2></h2>
+        <h1>Hobbs Home Automation Server</span></h1>
+        <h2>Login</h2>
     </div>   
         
     <div id="menu">
