@@ -87,7 +87,6 @@ function login($email, $password, $mysqli) {
 
 function checkbrute($user_id, $mysqli) {
 
-    return false; // --------------------__DISABLED FOR TESTING-------------------------
     // Get timestamp of current time 
     $now = time();
  
@@ -164,8 +163,6 @@ function login_check($mysqli) {
 
 
 function esc_url($url) {
-
-    return $url; //-------------------------DISABLED FOR TESTING------------------------------
  
     if ('' == $url) {
         return $url;
