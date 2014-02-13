@@ -1,0 +1,6 @@
+
+#!/bin/bash
+# This script makes sure the 1wire device has been added to the device tree overlay after startup
+
+echo BB-1WIRE-P9-22 > /sys/devices/bone_capemgr.9/slots
+cat /sys/bus/w1/devices/10-000800444018/w1_slave

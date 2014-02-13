@@ -71,7 +71,7 @@
                             }
                         echo "</table>";
 
-                        $sql="SELECT * FROM (SELECT * FROM tempdata ORDER BY tempId DESC LIMIT 10) AS `table` ORDER BY tempId ASC";
+                        $sql="SELECT * FROM (SELECT * FROM tempdata ORDER BY tempId DESC LIMIT 15) AS `table` ORDER BY tempId ASC";
 
                         $result = mysqli_query($mysqli,$sql);
                 
