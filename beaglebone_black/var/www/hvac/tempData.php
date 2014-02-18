@@ -11,14 +11,30 @@
         <table>
         <tr>
         <th>Current Temperature</th>
+        <th>Lower Setpoint</th>
+        <th>Upper Setpoint</th>
         </tr>";
 
     while($row = mysqli_fetch_array($result)) {
-        echo "<tr>";
-        echo "<td align=\"center\">" . $row['tempEntry'] . "F</td>";
-        echo "</tr>";
-        }
+        $current_temp = $row['tempEntry'];
+    }
+    $sql="SELECT * FROM tempSetpoint ORDER BY setpointId DESC LIMIT 1";
+
+    $result = mysqli_query($mysqli,$sql);
+    
+    while($row = mysqli_fetch_array($result)) {
+        $lower = $row['lower'];
+        $upper = $row['upper'];
+    }
+
+    echo "<tr>";
+    echo "<td align=\"center\">" . $current_temp . "F</td>";
+    echo "<td align=\"center\">" . $lower . "F</td>";
+    echo "<td align=\"center\">" . $upper . "F</td>";
+    echo "</tr>";
+        
     echo "</table>";
+
 
     $sql="SELECT * FROM (SELECT * FROM tempdata ORDER BY tempId DESC LIMIT 15) AS `table` ORDER BY tempId ASC";
 
