@@ -9,9 +9,15 @@
 #	and inserts it into a databse on the same micro-controller
 
 
-
+# -------------LIBRARIES----------------
 import MySQLdb
 
+# ----------------------------------------------------------------------------------------
+# Function Name: fetch()
+# Parameters:    None
+# Returns:       An integer from the DS1820
+# Description:   This method accesses the temp sensor hardware and retrieves the temperature value from it
+# ----------------------------------------------------------------------------------------
 def fetch():
 
 	w1="/sys/bus/w1/devices/10-000800444018/w1_slave"
@@ -19,10 +25,15 @@ def fetch():
 	return int(raw.split("t=")[-1])
 
 
+
+# ----------------------------------------------------------------------------------------
+# Function Name: main()
+# Parameters:    None
+# Returns:       None
+# Description:   This is the main method
+# ----------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-	# Conversion from K to F
-	conversion = 1000.0*1.8+32.0
 
 	# MySQLdb object parameters, via library, and connect
 	conn = MySQLdb.connect(host= "localhost",
@@ -32,7 +43,7 @@ if __name__ == '__main__':
 	x = conn.cursor()
 
 	# Call fetch method, convert, and store
-	currentTemp = (fetch()/conversion)
+	currentTemp = (fetch()/1000.0*1.8+32.0)
 
 	# Insert into database
 	try:
@@ -41,5 +52,6 @@ if __name__ == '__main__':
 	except:
 	   conn.rollback()
 
+	# Close database connection
 	conn.close()
 
