@@ -1,0 +1,5 @@
+
+#!/bin/bash
+# This script checks to see that the Beaglebone Black has the correct time on restart
+
+ntpdate pool.ntp.org
