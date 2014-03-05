@@ -6,15 +6,15 @@
     $sql="SELECT tempEntry FROM tempdata ORDER BY tempId DESC LIMIT 1";
 
     $result = mysqli_query($mysqli,$sql);
-
-    echo "
-        <table>
-        <tr>
-        <th>Current Temperature</th>
-        <th>Lower Setpoint</th>
-        <th>Upper Setpoint</th>
-        </tr>";
-
+?>
+    
+    <table>
+    <tr>
+    <th>Current Temperature</th>
+    <th>Lower Setpoint</th>
+    <th>Upper Setpoint</th>
+    </tr>
+<?php
     while($row = mysqli_fetch_array($result)) {
         $current_temp = $row['tempEntry'];
     }
