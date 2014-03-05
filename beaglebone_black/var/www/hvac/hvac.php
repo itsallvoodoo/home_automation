@@ -8,6 +8,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<script>
+    function testFunction() {
+        alert("It works");
+    }
+</script>
 <script src="../js/Chart/Chart.js"></script>
 <meta name = "viewport" content = "initial-scale = 1, user-scalable = no">
         <style>
