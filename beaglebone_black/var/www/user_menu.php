@@ -11,7 +11,7 @@
     else :
 ?>
         <li><a href="/login.php">Log in</a></li>
-        <li><a href="#">Create Account</a></li>
+        <li><a href="/register.php">Create Account</a></li>
 <?php
 	endif;
 ?>

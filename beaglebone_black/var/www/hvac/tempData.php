@@ -53,9 +53,6 @@
     $result = mysqli_query($mysqli,$sql);
 
     echo '<p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
         <canvas id="canvas" height="450" width="600"></canvas>';
 
     ?>

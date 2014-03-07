@@ -19,6 +19,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="This website is my development platform for web technologies and home automation">
     <meta name="author" content="Chad Hobbs">
+    <script type="text/JavaScript" src="js/sha512.js"></script> 
+    <script type="text/JavaScript" src="js/forms.js"></script>
 
     <title>Hobbs Home Automation Server</title>
 
