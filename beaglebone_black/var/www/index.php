@@ -6,13 +6,15 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="mainApp">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="This website is my development platform for web technologies and home automation">
     <meta name="author" content="Chad Hobbs">
+    <script src="/js/angular.js"></script>
+    <script src="/js/scripts.js"></script>
 
     <title>Hobbs Home Automation Server</title>
 
@@ -23,7 +25,7 @@
     <link href="/css/mainsite.css" rel="stylesheet">
   </head>
 
-  <body>
+  <body ng-controller="mainController">
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
@@ -66,6 +68,11 @@
           <p>This website is being served from a Beaglebone Black and is the same device that controls various functions around the house.</p>
           <p>&nbsp;</p>
           <p>&nbsp;</p>
+          <div id="main">
+            {{ message }}
+
+          </div>
+
 
         </div>
       </div>
