@@ -15,6 +15,7 @@
     <meta name="author" content="Chad Hobbs">
     <script src="/js/angular.js"></script>
     <script src="/js/scripts.js"></script>
+    <script src="../js/Chart/Chart.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-route.js"></script>
 
     <title>Hobbs Home Automation Server</title>

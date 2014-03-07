@@ -6,6 +6,11 @@
 * description: This script contains all of the javascript functions needed to implement my home automation website 
 */
 
+function testFunction() {
+	alert("It works");
+}
+
+
 /* ----------------------------------------------------------------------------------------
 * Module Name: mainApp
 * Parameters:    TBD
@@ -24,7 +29,7 @@ var mainApp = angular.module('mainApp', ['ngRoute']);
 			})
 
 					.when('/access', {
-				templateUrl : '/access/access.html',
+				templateUrl : '/access/access.php',
 				controller  : 'accessController'
 			})
 
@@ -34,7 +39,7 @@ var mainApp = angular.module('mainApp', ['ngRoute']);
 			})
 
 					.when('/hvac', {
-				templateUrl : '/hvac/hvac.php',
+				templateUrl : '/hvac/tempData.php',
 				controller  : 'hvacController'
 			});
 	});
