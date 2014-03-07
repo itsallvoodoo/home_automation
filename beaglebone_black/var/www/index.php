@@ -15,6 +15,7 @@
     <meta name="author" content="Chad Hobbs">
     <script src="/js/angular.js"></script>
     <script src="/js/scripts.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-route.js"></script>
 
     <title>Hobbs Home Automation Server</title>
 
@@ -36,7 +37,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Hobbs Home Automation Server</a>
+          <a class="navbar-brand" href="/">Hobbs Home Automation Server</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -50,7 +51,10 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <?php include 'context_menu.php'; ?>
+            <li class="active"><a href="#home">Home</a></li>
+            <li><a href="#access">Access Control</a></li>
+            <li><a href="#security">Security</a></li>
+            <li><a href="#hvac">HVAC</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li></li>
@@ -60,19 +64,10 @@
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Home</h1>
-
-          <h2 class="sub-header">Welcome to Chad's Home Automation Server</h2>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>This website is being served from a Beaglebone Black and is the same device that controls various functions around the house.</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
           <div id="main">
-            {{ message }}
 
+            <div ng-view></div>
           </div>
-
 
         </div>
       </div>

@@ -1,6 +1,7 @@
 <?php
 ?>
-		<li class="active"><a href="/index.php">Home</a></li>
-		<li><a href="/access/access.php">Access Control</a></li>
-		<li><a href="/security/security.php">Security</a></li>
-		<li><a href="/hvac/hvac.php">HVAC</a></li>
+		<li class="active"><a href="#">Home</a></li>
+		<li><a href="#access">Access Control</a></li>
+		<li><a href="#security">Security</a></li>
+		<li><a href="#hvac">HVAC</a></li>
+
