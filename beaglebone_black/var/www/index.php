@@ -55,10 +55,10 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#home">Home</a></li>
-            <li><a href="#access">Access Control</a></li>
-            <li><a href="#security">Security</a></li>
-            <li><a href="#hvac">HVAC</a></li>
+            <li><a ng-class="{active: $route.current.activetab == 'home'}" href="#home">Home</a></li>
+            <li><a ng-class="" href="#access">Access Control</a></li>
+            <li><a ng-class="" href="#security">Security</a></li>
+            <li><a ng-class="" href="#hvac">HVAC</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
