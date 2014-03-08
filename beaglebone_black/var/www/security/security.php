@@ -1,22 +1,31 @@
-<h1 class="page-header">{{message}}</h1>
+<html>
+<head>
+  <meta charset="utf-8">
 
-<?php 
-  include_once '../includes/db_connect.php';
-  include_once '../includes/functions.php';
+  <base href="/">
+</head>
+<body>
+  <h1 class="page-header">{{message}}</h1>
 
-  if (login_check($mysqli) == true) : ?>
-  
+  <?php 
+    include_once '../includes/db_connect.php';
+    include_once '../includes/functions.php';
+
+    if (login_check($mysqli) == true) : ?>
+    
+      <p>
+          Welcome <?php echo htmlentities($_SESSION['username']); ?>!
+      </p>
+      <p>
+          <img src="sec_cam.jpg" alt="Example Footage" height="237" width="316">
+      </p>
+  <?php
+   else : ?>
     <p>
-        Welcome <?php echo htmlentities($_SESSION['username']); ?>!
+        <span class="error">You are not authorized to access this page.</span> Please <a href="../login.php">login</a>.
     </p>
-    <p>
-        <img src="sec_cam.jpg" alt="Example Footage" height="237" width="316">
-    </p>
-<?php
- else : ?>
-  <p>
-      <span class="error">You are not authorized to access this page.</span> Please <a href="../login.php">login</a>.
-  </p>
 
-<?php
- endif; ?>
+  <?php
+   endif; ?>
+</body>
+</html>

@@ -6,11 +6,6 @@
 * description: This script contains all of the javascript functions needed to implement my home automation website 
 */
 
-function testFunction() {
-	alert("It works");
-}
-
-
 /* ----------------------------------------------------------------------------------------
 * Module Name: mainApp
 * Parameters:    TBD
@@ -20,28 +15,33 @@ function testFunction() {
 */
 var mainApp = angular.module('mainApp', ['ngRoute']);
 
-	mainApp.config(function($routeProvider) {
+	mainApp.config(function($routeProvider, $locationProvider) {
 		$routeProvider
 
-					.when('/home', {
-				templateUrl : '/home.php',
-				controller  : 'mainController'
+			.when('/home', {
+			templateUrl : '../home.php',
+			controller  : 'mainController'
 			})
 
-					.when('/access', {
-				templateUrl : '/access/access.php',
-				controller  : 'accessController'
+			.when('/access', {
+			templateUrl : '../access/access.php',
+			controller  : 'accessController'
 			})
 
-					.when('/security', {
-				templateUrl : '/security/security.php',
-				controller  : 'securityController'
+			.when('/security', {
+			templateUrl : '../security/security.php',
+			controller  : 'securityController'
 			})
 
-					.when('/hvac', {
-				templateUrl : '/hvac/tempData.php',
-				controller  : 'hvacController'
+			.when('/hvac', {
+			templateUrl : '../hvac/tempData.php',
+			controller  : 'hvacController'
 			});
+
+			// .otherwise({redirectTo: '/home'});
+
+		$locationProvider.html5Mode(true);
+
 	});
 
 	mainApp.controller('mainController', function($scope) {
@@ -59,3 +59,7 @@ var mainApp = angular.module('mainApp', ['ngRoute']);
 	mainApp.controller('hvacController', function($scope) {
 		$scope.message = 'HVAC';
 	});
+
+function testFunction() {
+        alert("It works");
+    }

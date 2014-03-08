@@ -13,12 +13,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="This website is my development platform for web technologies and home automation">
     <meta name="author" content="Chad Hobbs">
-    <script src="/js/angular.js"></script>
-    <script src="/js/scripts.js"></script>
-    <script src="../js/Chart/Chart.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-route.js"></script>
+    <base href="/">
 
     <title>Hobbs Home Automation Server</title>
+
+    <!-- Website functionality JS -->
+    <script src="/js/angular.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="/js/Chart/Chart.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-route.js"></script>
 
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -56,12 +59,6 @@
             <li><a href="#access">Access Control</a></li>
             <li><a href="#security">Security</a></li>
             <li><a href="#hvac">HVAC</a></li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li></li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
