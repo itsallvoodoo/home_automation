@@ -13,9 +13,10 @@
 * Description:   This is the main module
 *  ----------------------------------------------------------------------------------------
 */
-var mainApp = angular.module('mainApp', ['ngRoute']);
+var mainApp = angular.module('mainApp', ['ngRoute']); // ngRoute is specified to control loading of external pages into ng-view via routeProvider
 
 	mainApp.config(function($routeProvider, $locationProvider) {
+		// routeProvider gives ng-view the template and controller that is appropriate when a link is clicked. Activetab is for ng-class:active
 		$routeProvider
 
 			.when('/home', {
@@ -44,10 +45,11 @@ var mainApp = angular.module('mainApp', ['ngRoute']);
 
 			// .otherwise({redirectTo: '/home'});
 
-		$locationProvider.html5Mode(true);
+		$locationProvider.html5Mode(true); // This, along with base in index.php, allows for pretty urls in angular
 
 	});
 
+	// The following controllers allow for custom functions and parameters when called upon
 	mainApp.controller('mainController', function($scope, $location) {
 		$scope.message = 'Home';
 
@@ -84,7 +86,7 @@ var mainApp = angular.module('mainApp', ['ngRoute']);
 
 	});
 
-
+// This is a very rudimentary test function for my HVAC page. Will be replaced eventually
 function testFunction() {
         alert("It works");
     }
