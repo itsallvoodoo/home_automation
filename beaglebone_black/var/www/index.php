@@ -37,7 +37,7 @@
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
+            <span class="icon-bar">hello</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
@@ -55,10 +55,10 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li><a ng-class="{active: $route.current.activetab == 'home'}" href="#home">Home</a></li>
-            <li><a ng-class="" href="#access">Access Control</a></li>
-            <li><a ng-class="" href="#security">Security</a></li>
-            <li><a ng-class="" href="#hvac">HVAC</a></li>
+            <li ng-class="{active:isActive('/home')}"><a href="#home">Home</a></li><!-- --> 
+            <li ng-class="{active:isActive('/access')}"><a href="#access">Access Control</a></li><!-- --> 
+            <li ng-class="{active:isActive('/security')}"><a href="#security">Security</a></li><!-- -->
+            <li ng-class="{active:isActive('/hvac')}"><a href="#hvac">HVAC</a></li> <!-- --> 
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

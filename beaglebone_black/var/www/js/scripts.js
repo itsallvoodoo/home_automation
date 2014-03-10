@@ -20,23 +20,26 @@ var mainApp = angular.module('mainApp', ['ngRoute']);
 
 			.when('/home', {
 			templateUrl : '../home.php',
-			controller  : 'mainController'
+			controller  : 'mainController',
 			activetab: 'home'
 			})
 
 			.when('/access', {
 			templateUrl : '../access/access.php',
-			controller  : 'accessController'
+			controller  : 'accessController',
+			activetab: 'access'
 			})
 
 			.when('/security', {
 			templateUrl : '../security/security.php',
-			controller  : 'securityController'
+			controller  : 'securityController',
+			activetab: 'security'
 			})
 
 			.when('/hvac', {
 			templateUrl : '../hvac/tempData.php',
-			controller  : 'hvacController'
+			controller  : 'hvacController',
+			activetab: 'hvac'
 			});
 
 			// .otherwise({redirectTo: '/home'});
@@ -45,26 +48,42 @@ var mainApp = angular.module('mainApp', ['ngRoute']);
 
 	});
 
-	mainApp.controller('mainController', function($scope, $route) {
+	mainApp.controller('mainController', function($scope, $location) {
 		$scope.message = 'Home';
 
-		$scope.$route = $route;
+		$scope.isActive = function(route) {
+        	return route === $location.path();
+        }
+
 	});
 
-	mainApp.controller('accessController', function($scope) {
+	mainApp.controller('accessController', function($scope, $location) {
 		$scope.message = 'Access';
 
+		$scope.isActive = function(route) {
+        	return route === $location.path();
+        }
+
 	});
 
-	mainApp.controller('securityController', function($scope) {
+	mainApp.controller('securityController', function($scope, $location) {
 		$scope.message = 'Security';
 
+		$scope.isActive = function(route) {
+        	return route === $location.path();
+        }
+
 	});
 
-	mainApp.controller('hvacController', function($scope) {
+	mainApp.controller('hvacController', function($scope, $location) {
 		$scope.message = 'HVAC';
 
+		$scope.isActive = function(route) {
+        	return route === $location.path();
+        }
+
 	});
+
 
 function testFunction() {
         alert("It works");
