@@ -1,7 +1,20 @@
-<?php 
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <base href="/">
+</head>
+<body>
+  <h1 class="page-header">{{message}}</h1>
+
+<?php
+    include_once '../includes/db_connect.php';
+    include_once '../includes/functions.php';
+
     if (login_check($mysqli) == true) :
-                
-        include_once '../includes/db_temp_connect.php';
+        echo 'well hello there';
+        /*  
+        include '../includes/db_temp_connect.php';
 
         $sql="SELECT tempEntry FROM tempdata ORDER BY tempId DESC LIMIT 1";
 
@@ -16,8 +29,8 @@
             </tr>
             <tr>
                 <td></td>
-                <td><button type="button"  onclick="testFunction()">Increase</button></td>
-                <td><button type="button"  onclick="testFunction()">Increase</button></td>
+                <td><!--<button type="button"  onclick="testFunction()">Increase</button>--></td>
+                <td><!--<button type="button"  onclick="testFunction()">Increase</button>--></td>
             </tr>
 
 <?php
@@ -49,6 +62,7 @@
         </table>
 
 <?php
+    /*
         $sql="SELECT * FROM (SELECT * FROM tempdata ORDER BY tempId DESC LIMIT 15) AS `table` ORDER BY tempId ASC";
 
         $result = mysqli_query($mysqli,$sql);
@@ -97,9 +111,12 @@
             var myLine = new Chart(document.getElementById("canvas").getContext("2d")).Line(lineChartData);
         
         </script>
-
+        */ ?>
         <?php else : ?>
             <p>
                 <span class="error">You are not authorized to access this page.</span> Please <a href="../login.php">login</a>.
             </p>
-        <?php endif; ?>      
+        <?php endif; ?>
+
+</body>
+</html>

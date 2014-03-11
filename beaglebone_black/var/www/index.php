@@ -1,6 +1,6 @@
 <?php
-  include_once 'includes/db_connect.php';
-  include_once 'includes/functions.php';
+  include 'includes/db_connect.php';
+  include 'includes/functions.php';
  
   sec_session_start();
 ?>
@@ -37,7 +37,7 @@
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar">hello</span>
+            <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
