@@ -1,8 +1,9 @@
 <html>
 <head>
-  <meta charset="utf-8">
+    <meta charset="utf-8">
 
-  <base href="/">
+    <base href="/">
+    <script src="../js/Chart/Chart.js"></script>
 </head>
 <body>
   <h1 class="page-header">{{message}}</h1>
@@ -10,6 +11,8 @@
 <?php
     include_once '../includes/db_connect.php';
     include_once '../includes/functions.php';
+
+
 
     if (login_check($mysqli) == true) :
         echo 'well hello there';
