@@ -21,18 +21,31 @@ ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1) #These are the parameters
 
 ser.write('ATSP0 \r'.rstrip())
 
+codes = ["01 0C \r"]
 
-# This method returns the speed at which the vehicle is travelling
-def get_speed():
-	ser.write("01 0C \r")
+
+# ----------------------------------------------------------------------------------------
+# Function Name: get_data()
+# Parameters:    code
+# Returns:       None
+# Description:   This retrieves data from the truck data bus
+# ----------------------------------------------------------------------------------------
+def get_data(code):
+	ser.write(codes[code])
 	time.sleep(1)
 	speed_hex = ser.readline().split(' ')
-	speed = float(int('0x'+speed_hex[2], 0 ))
-	print 'Speed: ', speed, 'mph'
-
+	return float(int('0x'+speed_hex[2], 0 ))
+	
+# ----------------------------------------------------------------------------------------
+# Function Name: main()
+# Parameters:    None
+# Returns:       None
+# Description:   This is the main method and controls the main program
+# ----------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
 
 	while True:
-		get_speed()
+		thisCode = 0
+		print 'Speed: ', get_speed(thisCode), 'mph'
 		time.sleep(5)
