@@ -6,22 +6,34 @@
 #
 # description: This is a custom python interface for my truck OBD2 bus
 
-
-
 # ------------- LIBRARIES AND GLOBALS ----------------
 import serial 	# This is the pyserial library, which enables communication via serial port
-import time
-
-ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1) #These are the parameters for my specific usb to serial adapter, (device,baud,timeout)
+import time		# Library used to allow for delays
 
 
+class truck:
+	def __init__(self):
+    	self.codes = ["01 0C \r"]
+
+    	#Define the connection to the serial bus
+    	self.ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1)
+
+    	#Define the communication mode of the ELM327 USB to Serial cable
+    	self.ser.write('ATSP0 \r')
 
 
-# ------------- INSTANTIATION ----------------
+    # ----------------------------------------------------------------------------------------
+	# Function Name: get_data()
+	# Parameters:    code - An integer specifying which code in a list of codes that is requested
+	# Returns:       A float consisting of a hex value converted to integer
+	# Description:   This retrieves data from the truck data bus
+	# ----------------------------------------------------------------------------------------
+	def get_data(self,code):
+		ser.write(codes[code])
+		speed_hex = ser.readline().split(' ')
+		return float(int('0x'+speed_hex[2], 0 ))
 
-ser.write('ATSP0 \r'.rstrip())
 
-codes = ["01 0C \r"]
 
 
 # ----------------------------------------------------------------------------------------
@@ -30,11 +42,22 @@ codes = ["01 0C \r"]
 # Returns:       None
 # Description:   This retrieves data from the truck data bus
 # ----------------------------------------------------------------------------------------
-def get_data(code):
-	ser.write(codes[code])
-	time.sleep(1)
-	speed_hex = ser.readline().split(' ')
-	return float(int('0x'+speed_hex[2], 0 ))
+
+
+
+
+# ----------------------------------------------------------------------------------------
+# Function Name: get_data()
+# Parameters:    code
+# Returns:       None
+# Description:   This retrieves data from the truck data bus
+# ----------------------------------------------------------------------------------------
+
+
+
+
+
+
 	
 # ----------------------------------------------------------------------------------------
 # Function Name: main()
