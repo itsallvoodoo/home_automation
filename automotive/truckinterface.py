@@ -29,29 +29,21 @@ class truck:
 	# Description:   This retrieves data from the truck data bus
 	# ----------------------------------------------------------------------------------------
 	def get_data(self,code):
-		ser.write(codes[code])
-		speed_hex = ser.readline().split(' ')
-		return float(int('0x'+speed_hex[2], 0 ))
+		self.ser.write(codes[code])
+		return self.ser.readline().split(' ') 
+
+
+	# ----------------------------------------------------------------------------------------
+	# Function Name: print_speed()
+	# Parameters:    self, code
+	# Returns:       None
+	# Description:   This prints the given speed of the vehicle
+	# ----------------------------------------------------------------------------------------
+	def print_speed(self,code):
+		print "Speed is ",float(int('0x'+code[2], 0 )), " mph."
 
 
 
-
-# ----------------------------------------------------------------------------------------
-# Function Name: get_data()
-# Parameters:    code
-# Returns:       None
-# Description:   This retrieves data from the truck data bus
-# ----------------------------------------------------------------------------------------
-
-
-
-
-# ----------------------------------------------------------------------------------------
-# Function Name: get_data()
-# Parameters:    code
-# Returns:       None
-# Description:   This retrieves data from the truck data bus
-# ----------------------------------------------------------------------------------------
 
 
 
@@ -70,5 +62,5 @@ if __name__ == '__main__':
 
 	while True:
 		thisCode = 0
-		print 'Speed: ', get_speed(thisCode), 'mph'
+		print_speed(get_speed(thisCode)),
 		time.sleep(5)
