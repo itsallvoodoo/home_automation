@@ -21,6 +21,14 @@ class truck:
     	#Define the communication mode of the ELM327 USB to Serial cable
     	self.ser.write('ATSP0 \r')
 
+    # ----------------------------------------------------------------------------------------
+	# Function Name: get_data()
+	# Parameters:    code - An integer specifying which code in a list of codes that is requested
+	# Returns:       A float consisting of a hex value converted to integer
+	# Description:   This retrieves data from the truck data bus
+	# ----------------------------------------------------------------------------------------
+    def base_state():
+
 
     # ----------------------------------------------------------------------------------------
 	# Function Name: get_data()
@@ -61,6 +69,12 @@ if __name__ == '__main__':
 
 
 	while True:
-		thisCode = 0
-		print_speed(get_speed(thisCode)),
-		time.sleep(5)
+		try:
+			myTruck = truck
+			thisCode = 0
+			speed = myTruck.get_speed(thisCode)
+			myTruck.print_speed(speed)
+			time.sleep(5)
+		except e:
+			error = e
+			print error
