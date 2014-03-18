@@ -13,21 +13,44 @@ import time		# Library used to allow for delays
 
 class truck:
 	def __init__(self):
-    	self.codes = ["01 0C \r"]
+    	self.codes = ["01 01", "01 02", "01 03", "01 04", "01 05", "01 06", "01 07", "01 08", "01 09", "01 0A", "01 0B", "01 0C"]
 
     	#Define the connection to the serial bus
     	self.ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1)
 
-    	#Define the communication mode of the ELM327 USB to Serial cable
-    	self.ser.write('ATSP0 \r')
+
 
     # ----------------------------------------------------------------------------------------
-	# Function Name: get_data()
-	# Parameters:    code - An integer specifying which code in a list of codes that is requested
-	# Returns:       A float consisting of a hex value converted to integer
-	# Description:   This retrieves data from the truck data bus
+	# Function Name: base_state()
+	# Parameters:    None
+	# Returns:       True if all checks pass, otherwise it returns False
+	# Description:   This puts the ELM327 into a base state in which the data is readable by the program
 	# ----------------------------------------------------------------------------------------
-    def base_state():
+    def base_state(self):
+
+
+    	#Define the communication mode of the ELM327 USB to Serial cable
+    	self.ser.write('ATSP0 \r')
+    	time.sleep(2)
+    	if self.ser.readline() == 'OK':
+    		#Define the ... of the ELM327 USB to Serial cable
+	    	self.ser.write('ATL1 \r')
+	    	time.sleep(2)
+	    	if self.ser.readline() == 'OK':
+	    		#Define the ... of the ELM327 USB to Serial cable
+	    		self.ser.write('ATH1 \r')
+	    		time.sleep(2)
+	    			if self.ser.readline() == 'OK':
+	    				#Define the ... of the ELM327 USB to Serial cable
+	    				self.ser.write('ATS1 \r')
+	    				time.sleep(2)
+	    				if self.ser.readline() == 'OK':
+	    					#Define the ... of the ELM327 USB to Serial cable
+	    					self.ser.write('ATAL \r')
+	    					time.sleep(2)
+	    					if self.ser.readline() == 'OK':
+	    						return True
+    	return False
 
 
     # ----------------------------------------------------------------------------------------
@@ -51,13 +74,6 @@ class truck:
 		print "Speed is ",float(int('0x'+code[2], 0 )), " mph."
 
 
-
-
-
-
-
-
-
 	
 # ----------------------------------------------------------------------------------------
 # Function Name: main()
@@ -67,14 +83,18 @@ class truck:
 # ----------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
+	myTruck = truck
+	if myTruck.base_state()
+		print "Good to go"
 
-	while True:
-		try:
-			myTruck = truck
-			thisCode = 0
-			speed = myTruck.get_speed(thisCode)
-			myTruck.print_speed(speed)
-			time.sleep(5)
-		except e:
-			error = e
-			print error
+		while True:
+			try:
+				
+					thisCode = 11
+					speed = myTruck.get_speed(thisCode + " \r")
+					myTruck.print_speed(speed)
+					time.sleep(5)
+				
+			except e:
+				error = e
+				print error
