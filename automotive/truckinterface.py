@@ -13,7 +13,15 @@ import time		# Library used to allow for delays
 
 class truck:
 	def __init__(self):
-    	self.codes = ["01 01", "01 02", "01 03", "01 04", "01 05", "01 06", "01 07", "01 08", "01 09", "01 0A", "01 0B", "01 0C"]
+		self.codes = ["01 01", "01 02", "01 03", "01 04", "01 05", "01 06", "01 07", "01 08", "01 09", "01 0A", "01 0B",
+    				"01 0C","01 0D"]
+
+    	# ---- Contemplating implementing a dictionary, still have to change a lot of other stuff to implement
+    	
+    	#self.codes = dict{["01 01", "01 02", "01 03", "01 04", "01 05", "01 06", "01 07", "01 08", "01 09", "01 0A", "01 0B",
+    	#				 "01 0C","01 0D"],
+    	#				['status', 'freeze', 'fuelSystem','engineLoad','coolantTemp','shortFuelBank1', 'longFuelBank1','shortFuelBank2',
+    	#				'longFuelBank2','fuelPressure','intakePressure','engineRPM','vehicleSpeed']}
 
     	#Define the connection to the serial bus
     	self.ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1)
