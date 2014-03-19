@@ -37,10 +37,10 @@ class truck:
 
 
     	#Define the communication modes of the ELM327 USB to Serial cable
-    	modes = ['ATSP0 \r', 'ATL1 \r', 'ATH1 \r', 'ATS1 \r', 'ATAL \r']
+    	modes = ['ATSP0', 'ATL1', 'ATH1', 'ATS1', 'ATAL']
 
     	for mode in modes:
-    		self.ser.write(mode)
+    		self.ser.write(mode + ' \r')
     		time.sleep(2)
     		if self.ser.readline() != 'OK':
     			return False
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 		while True:
 			try:
 				
-					thisCode = 11
+					thisCode = 12
 					speed = myTruck.get_speed(thisCode + " \r")
 					myTruck.print_speed(speed)
 					time.sleep(5)
