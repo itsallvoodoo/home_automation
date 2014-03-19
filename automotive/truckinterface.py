@@ -17,7 +17,6 @@ class truck:
     				"01 0C","01 0D"]
 
     	# ---- Contemplating implementing a dictionary, still have to change a lot of other stuff to implement
-    	
     	#self.codes = dict{["01 01", "01 02", "01 03", "01 04", "01 05", "01 06", "01 07", "01 08", "01 09", "01 0A", "01 0B",
     	#				 "01 0C","01 0D"],
     	#				['status', 'freeze', 'fuelSystem','engineLoad','coolantTemp','shortFuelBank1', 'longFuelBank1','shortFuelBank2',
@@ -37,28 +36,16 @@ class truck:
     def base_state(self):
 
 
-    	#Define the communication mode of the ELM327 USB to Serial cable
-    	self.ser.write('ATSP0 \r')
-    	time.sleep(2)
-    	if self.ser.readline() == 'OK':
-    		#Define the ... of the ELM327 USB to Serial cable
-	    	self.ser.write('ATL1 \r')
-	    	time.sleep(2)
-	    	if self.ser.readline() == 'OK':
-	    		#Define the ... of the ELM327 USB to Serial cable
-	    		self.ser.write('ATH1 \r')
-	    		time.sleep(2)
-	    			if self.ser.readline() == 'OK':
-	    				#Define the ... of the ELM327 USB to Serial cable
-	    				self.ser.write('ATS1 \r')
-	    				time.sleep(2)
-	    				if self.ser.readline() == 'OK':
-	    					#Define the ... of the ELM327 USB to Serial cable
-	    					self.ser.write('ATAL \r')
-	    					time.sleep(2)
-	    					if self.ser.readline() == 'OK':
-	    						return True
-    	return False
+    	#Define the communication modes of the ELM327 USB to Serial cable
+    	modes = ['ATSP0 \r', 'ATL1 \r', 'ATH1 \r', 'ATS1 \r', 'ATAL \r']
+
+    	for mode in modes:
+    		self.ser.write(mode)
+    		time.sleep(2)
+    		if self.ser.readline() != 'OK':
+    			return False
+
+    	return True
 
 
     # ----------------------------------------------------------------------------------------
