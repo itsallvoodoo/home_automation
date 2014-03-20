@@ -24,6 +24,7 @@ class truck:
 
     	#Define the connection to the serial bus
     	self.ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1)
+    	return
 
 
 
