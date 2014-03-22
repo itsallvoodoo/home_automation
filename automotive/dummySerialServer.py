@@ -10,12 +10,16 @@ import serial
 
 ser = serial.Serial('/dev/ttyp3', 115200, timeout=1)
 
+# ----------------------------------------------------------------------------------------
+# Function Name: readLog()
+# Parameters:    None
+# Returns:       An array of lines that were pulled from a log file
+# Description:   This is called to read in a new log file and put it into an array
+# ----------------------------------------------------------------------------------------
 def readLog():
 	with open('colorado-random', 'r') as f:
-  		lineArr=f.read().split('\n')
-  			
-
-
+		lineArray=f.read().split('\n') 
+  	return lineArray
 
 
 
@@ -26,9 +30,15 @@ def readLog():
 # Description:   Utilizing the serial library, writing and reading from the serial port
 # ----------------------------------------------------------------------------------------
 if __name__ == '__main__':
-	
-	while True:
-		toOBDII = input('>')
-		ser.write(toOBDII + ' \r')
 
-		print ser.readline()
+
+	lineArray = readLog()
+	i = 0
+	size = len(lineArray)
+
+	while True:
+		
+		ser.write(lineArray[i])
+		i += 1
+		if i == size:
+			i = 0

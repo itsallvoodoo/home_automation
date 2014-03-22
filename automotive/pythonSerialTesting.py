@@ -8,7 +8,7 @@
 
 import serial
 
-ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1)
+ser = serial.Serial('/dev/ptyp3', 115200, timeout=1)
 
 # ----------------------------------------------------------------------------------------
 # Function Name: main()
@@ -18,7 +18,7 @@ ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1)
 # ----------------------------------------------------------------------------------------
 if __name__ == '__main__':
 	while True:
-		toOBDII = input('>')
-		ser.write(toOBDII + ' \r')
+		#toOBDII = input('>')
+		#ser.write(toOBDII + ' \r')
 
 		print ser.readline()
