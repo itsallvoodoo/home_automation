@@ -21,6 +21,25 @@ def readLog():
 		lineArray=f.read().split('\n') 
   	return lineArray
 
+# ----------------------------------------------------------------------------------------
+# Function Name: cycleArray()
+# Parameters:    None
+# Returns:       None
+# Description:   This method continually prints the array
+# ----------------------------------------------------------------------------------------
+def cycleArray(thisArray):
+
+	i = 0
+	size = len(lineArray)
+
+	while True:
+		try:
+			ser.write(thisArray[i])
+			i += 1
+			if i == size:
+				i = 0
+		except KeyboardInterrupt:
+			return
 
 
 # ----------------------------------------------------------------------------------------
@@ -33,12 +52,8 @@ if __name__ == '__main__':
 
 
 	lineArray = readLog()
-	i = 0
-	size = len(lineArray)
+	cycleArray(lineArray)
 
-	while True:
+	
 		
-		ser.write(lineArray[i])
-		i += 1
-		if i == size:
-			i = 0
+		
